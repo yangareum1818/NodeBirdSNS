@@ -1,0 +1,40 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2023,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "plugins": [
+    "import",
+    "react-hooks"
+  ],
+  "rules": {
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "react/prop-types": "off",
+  },
+  "markdownlint.config": {
+    "MD033": {
+      "allowed_elements": [
+        "nobr",
+        "sup",
+        "br",
+        "hr"
+      ]
+    },
+    "MD036": false,
+    "MD040": false,
+    "MD046": false
+  }
+}
