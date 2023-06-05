@@ -13,8 +13,15 @@ export const initialState = {
         {
           src: "https://picsum.photos/seed/picsum/200/300",
         },
-        { src: "https://picsum.photos/seed/picsum/200/300" },
-        { src: "https://picsum.photos/seed/picsum/200/300" },
+        {
+          src: "https://picsum.photos/seed/picsum/200/300",
+        },
+        {
+          src: "https://picsum.photos/seed/picsum/200/300",
+        },
+        {
+          src: "https://picsum.photos/seed/picsum/200/300",
+        },
       ],
       Comments: [
         {

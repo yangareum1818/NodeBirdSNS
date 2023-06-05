@@ -14,6 +14,12 @@ const PostImages = ({ images }) => {
       <>
         <img
           role={"presentation"}
+          style={{
+            margin: "0 auto",
+            width: "260px",
+            height: "385px",
+            objectFit: "contain",
+          }}
           src={images[0].src}
           alt={images[0].src}
           onClick={onZoom}
@@ -24,7 +30,7 @@ const PostImages = ({ images }) => {
 
   if (images.length === 2) {
     return (
-      <>
+      <div style={{ fontSize: 0 }}>
         <img
           role={"presentation"}
           style={{ width: "50%" }}
@@ -39,7 +45,7 @@ const PostImages = ({ images }) => {
           alt={images[1].src}
           onClick={onZoom}
         />
-      </>
+      </div>
     );
   }
   return (
@@ -60,10 +66,11 @@ const PostImages = ({ images }) => {
           verticalAlign: "middle",
         }}
         onClick={onZoom}
-      ></div>
-      <PlusOutlined />
-      <br />
-      {images.length - 1}개의 사진 더보기
+      >
+        <PlusOutlined />
+        <br />
+        {images.length - 1}개의 사진 더보기
+      </div>
     </div>
   );
 };
