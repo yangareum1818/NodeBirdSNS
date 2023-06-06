@@ -11,16 +11,16 @@ export const initialState = {
       content: "알음이의 첫번째 게시글 #해시태그 #익스프레스",
       Images: [
         {
-          src: "https://picsum.photos/seed/picsum/200/300",
+          src: "https://images.pexels.com/photos/16747504/pexels-photo-16747504.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
         },
         {
-          src: "https://picsum.photos/seed/picsum/200/300",
+          src: "https://images.pexels.com/photos/16721380/pexels-photo-16721380.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
         },
         {
-          src: "https://picsum.photos/seed/picsum/200/300",
+          src: "https://images.pexels.com/photos/16847901/pexels-photo-16847901.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
         },
         {
-          src: "https://picsum.photos/seed/picsum/200/300",
+          src: "https://images.pexels.com/photos/15206453/pexels-photo-15206453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
         },
       ],
       Comments: [
