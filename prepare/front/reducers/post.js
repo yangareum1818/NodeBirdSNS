@@ -8,7 +8,7 @@ export const initialState = {
         id: 1,
         nickname: "알음잉",
       },
-      content: "알음이의 첫번째 게시글 #해시태그 #익스프레스",
+      content: "알음이의 첫번째 게시글 #해시태그 #익스프레스 #바다 #건물 #풍경",
       Images: [
         {
           src: "https://images.pexels.com/photos/16747504/pexels-photo-16747504.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
@@ -21,6 +21,9 @@ export const initialState = {
         },
         {
           src: "https://images.pexels.com/photos/15206453/pexels-photo-15206453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        },
+        {
+          src: "https://images.pexels.com/photos/16159222/pexels-photo-16159222.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
         },
       ],
       Comments: [
