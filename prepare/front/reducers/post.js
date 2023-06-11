@@ -62,7 +62,7 @@ const dummyPost = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_POST:
-      console.log(...state.mainPosts);
+      // console.log(...state.mainPosts);
       // dummyPost를 앞쪽에 적어줘야 게시글 보다 위에 나타난다.
       return {
         ...state,
