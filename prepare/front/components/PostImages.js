@@ -21,9 +21,8 @@ const PostImages = ({ images }) => {
           role={"presentation"}
           style={{
             margin: "0 auto",
-            width: "260px",
-            height: "385px",
-            objectFit: "contain",
+            width: "100%",
+            objectFit: "cover",
           }}
           src={images[0].src}
           alt={images[0].src}
