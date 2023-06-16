@@ -1,6 +1,6 @@
 import shortId from "shortid";
 import { produce } from "immer";
-
+import { faker } from "@faker-js/faker";
 // data를 어떻게 받을건지 백엔드, 서버개발자와 의논 & 원하는 데이터 객체형식을 말해도됌. (리덕스 데이터 구조)
 // db의 시퀄라이즈 : 다른 데이터와 합쳐서 주게 되어 앞글자가 대문자이다.
 export const initialState = {
@@ -65,6 +65,35 @@ export const initialState = {
   addCommentDone: false,
   addCommentError: null,
 };
+
+faker.seed(123);
+initialState.mainPosts = initialState.mainPosts.concat(
+  Array(20)
+    .fill()
+    .map(() => ({
+      id: shortId.generate(),
+      User: {
+        id: shortId.generate(),
+        nickname: faker.internet.userName(),
+      },
+      content: faker.lorem.paragraph(),
+      Images: [
+        {
+          src: faker.image.url(),
+        },
+      ],
+      Comments: [
+        {
+          id: shortId.generate(),
+          User: {
+            id: shortId.generate(),
+            nickname: faker.internet.userName(),
+          },
+          content: faker.lorem.sentence(),
+        },
+      ],
+    }))
+);
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";

@@ -49,11 +49,13 @@ const AppLayout = ({ children }) => {
         <Menu.Item>
           <SearchInput enterButton="Search" />
         </Menu.Item>
-        <Menu.Item>
-          <Link href="/signup" legacyBehavior>
-            <a>회원가입</a>
-          </Link>
-        </Menu.Item>
+        {!me ? (
+          <Menu.Item>
+            <Link href="/signup" legacyBehavior>
+              <a>회원가입</a>
+            </Link>
+          </Menu.Item>
+        ) : null}
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
