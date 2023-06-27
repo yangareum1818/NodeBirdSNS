@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      // UserId: {}
+      // PostId: {}
     },
     {
       // Comment Module에 대한 셋팅
@@ -18,7 +20,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Comment.associate = (db) => {};
+  Comment.associate = (db) => {
+    db.Comment.belongsTo(db.User); // 어떤 댓글에 사용자 한명이 속해있다. 1:1관계
+    db.Comment.belongsTo(db.Post); // 어떤 댓글에 게시글이 한개 속해있다. 1:1관계
+  };
 
   return Comment;
 };

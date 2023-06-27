@@ -18,7 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Image.associate = (db) => {};
+  Image.associate = (db) => {
+    db.Image.belongsTo(db.Post); // 이미지들은 게시글의 소유자가 정해져있다. 1(게시글):N(이미지)관계
+  };
 
   return Image;
 };

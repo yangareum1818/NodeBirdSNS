@@ -18,7 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Hashtag.associate = (db) => {};
+  Hashtag.associate = (db) => {
+    db.Hashtag.belongsToMany(db.Post); // 하나의 해시태그에 여러개의 게시글 (M:N의 관계)
+  };
 
   return Hashtag;
 };
