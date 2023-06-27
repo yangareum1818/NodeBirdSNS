@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       // User Module에 대한 셋팅
       charset: "utf8",
-      collate: "uft8_general_ci", // 한글저장
+      collate: "utf8_general_ci", // 한글저장
     }
   );
 

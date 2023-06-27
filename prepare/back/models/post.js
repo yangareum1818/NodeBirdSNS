@@ -14,13 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     {
       // Post Module에 대한 셋팅
       charset: "utf8mb4", // 한글 + 이모티콘
-      collate: "uft8mb4_general_ci", // 한글 + 이모티콘 저장
+      collate: "utf8mb4_general_ci", // 한글 + 이모티콘 저장
     }
   );
 
   Post.associate = (db) => {
     db.Post.belongsTo(db.User); // 어떤게시글은 어떤사람(작성자)에게 속해있는다.
-    db.Post.belongsToMany(db.Hashtag); // 어떤 게시글에 여러개의 해시태그 (또, 하나의 해시태그에 여러개의 게시글) M:N의 관계 (다수대다수)
+    db.Post.belongsToMany(db.Hashtag, { through: "PostHashtag" }); // 어떤 게시글에 여러개의 해시태그 (또, 하나의 해시태그에 여러개의 게시글) M:N의 관계 (다수대다수)
     db.Post.hasMany(db.Comment); // 하나의 게시글에 댓글 여러개. 그 댓글에 게시글은 하난 1:1
     db.Post.hasMany(db.Image); // 하나의 게시글에 이미지는 여러개 1:N
     db.Post.belongsToMany(db.User, { through: "Like" }); // 하나의 게시글에 좋아요를 누른 여러사람 (중간테이블이름 정해줄 수 있다.) Post, User 모두 작성해줘야한다. (한 곳만 작성하면 작성하지 않은 한 곳에 중간테이블이름이 UserPost라고 생기는데 그게 좋아요 수인지 알 수 없으니, 해줘야한다.)

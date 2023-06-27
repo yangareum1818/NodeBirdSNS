@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       // Image Module에 대한 셋팅
       charset: "utf8", // 한글 + 이모티콘
-      collate: "uft8_general_ci", // 한글 + 이모티콘 저장
+      collate: "utf8_general_ci", // 한글 + 이모티콘 저장
     }
   );
 

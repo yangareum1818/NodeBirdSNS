@@ -14,12 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       // Hashtag Module에 대한 셋팅
       charset: "utf8mb4", // 한글 + 이모티콘
-      collate: "uft8mb4_general_ci", // 한글 + 이모티콘 저장
+      collate: "utf8mb4_general_ci", // 한글 + 이모티콘 저장
     }
   );
 
   Hashtag.associate = (db) => {
-    db.Hashtag.belongsToMany(db.Post); // 하나의 해시태그에 여러개의 게시글 (M:N의 관계)
+    db.Hashtag.belongsToMany(db.Post, { through: "PostHashtag" }); // 하나의 해시태그에 여러개의 게시글 (M:N의 관계)
   };
 
   return Hashtag;

@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       // Comment Module에 대한 셋팅
       charset: "utf8mb4", // 한글 + 이모티콘
-      collate: "uft8mb4_general_ci", // 한글 + 이모티콘 저장
+      collate: "utf8mb4_general_ci", // 한글 + 이모티콘 저장
     }
   );
 
