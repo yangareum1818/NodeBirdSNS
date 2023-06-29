@@ -8,6 +8,7 @@ import {
   LOG_IN_FAILURE,
   LOG_OUT_FAILURE,
   SIGN_UP_REQUEST,
+  SIGN_UP_SUCCESS,
   SIGN_UP_FAILURE,
   FOLLOW_REQUEST,
   FOLLOW_FAILURE,
@@ -66,7 +67,7 @@ function* signUp(action) {
     // yield delay(1000);
     console.log(result);
     yield put({
-      type: LOG_IN_SUCCESS,
+      type: SIGN_UP_SUCCESS,
     });
   } catch (error) {
     yield put({

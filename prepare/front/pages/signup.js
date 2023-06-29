@@ -1,7 +1,8 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import Head from "next/head";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Router from "next/router";
 import styled from "styled-components";
 import AppLayout from "../components/AppLayout";
 import useInput from "../hooks/useInput";
@@ -34,7 +35,18 @@ const Signup = () => {
   }, []);
 
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError } = useSelector(
+    (state) => state.user
+  );
+
+  useEffect(() => {
+    if (signUpDone) Router.push("/");
+  }, [signUpDone]);
+
+  useEffect(() => {
+    // state 사용해서 화면에 그려도된다.
+    if (signUpError) alert(signUpError); // 연결 관계 잘 파악하기 (흐름)
+  }, [signUpError]);
 
   const onSubmit = useCallback(() => {
     if (password !== passwordCheck) return setPasswordError(true);
