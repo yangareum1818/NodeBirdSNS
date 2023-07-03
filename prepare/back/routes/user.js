@@ -55,4 +55,11 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// 로그아웃
+router.post("/user/logout", (req, res, next) => {
+  req.logout();
+  req.session.destroy();
+  res.send("ok");
+});
+
 module.exports = router;
