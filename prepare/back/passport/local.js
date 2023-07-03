@@ -8,7 +8,7 @@ module.exports = () => {
     new LocalStrategy(
       {
         usernameField: "email",
-        passwordField: "passsword",
+        passwordField: "password",
       },
       async (email, password, done) => {
         // findOne함수는 비동기.
