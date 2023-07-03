@@ -1,9 +1,35 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const passport = require("passport");
+
 const { User } = require("../models");
 
 const router = express.Router();
 
+// 로그인
+router.post("/login", (req, res, next) => {
+  // POST /user/login
+  passport.authenticate("local", (err, user, info) => {
+    // 서버 에러
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    // 클라이언트 에러
+    if (info) return res.status(401).send(info.reason);
+
+    // 성공 시
+    return req.login(user, (loginErr) => {
+      if (loginErr) {
+        console.error(loginErr);
+        return next(loginErr);
+      }
+      return res.json(user);
+    });
+  })(req, res, next);
+});
+
+// 회원가입
 router.post("/", async (req, res, next) => {
   // POST /user
   try {
