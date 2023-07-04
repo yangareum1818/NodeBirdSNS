@@ -49,6 +49,7 @@ const AppLayout = ({ children }) => {
         <Menu.Item>
           <SearchInput enterButton="Search" />
         </Menu.Item>
+        {/* 로그인 되었을 때 회원가입 메뉴 보이지 않기. */}
         {!me ? (
           <Menu.Item>
             <Link href="/signup" legacyBehavior>

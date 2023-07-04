@@ -80,11 +80,9 @@ export const loginRequestAction = (data) => {
   };
 };
 
-export const logoutRequestAction = () => {
-  return {
-    type: LOG_OUT_REQUEST,
-  };
-};
+export const logoutRequestAction = () => ({
+  type: LOG_OUT_REQUEST,
+});
 
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -97,7 +95,7 @@ const reducer = (state = initialState, action) => {
       case LOG_IN_SUCCESS:
         draft.logInLoading = false;
         draft.logInDone = true;
-        draft.me = dummyUser(action.data);
+        draft.me = action.data;
         break;
       case LOG_IN_FAILURE:
         draft.logInLoading = false;
