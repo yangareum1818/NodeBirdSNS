@@ -61,6 +61,8 @@ app.get("/posts", (req, res) => {
 app.use("/post", postRouter);
 app.use("/user", userRouter);
 
+// 이 사이에 에러처리 미들웨어가 내부적으로 존재한다.
+
 app.listen(3065, () => {
   console.log("서버 실행 중 - !");
 });

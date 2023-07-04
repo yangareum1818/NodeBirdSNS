@@ -3,11 +3,13 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 
 const { User, Post } = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
 // 로그인
-router.post("/login", (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
+  // 로그인은 로그인을 하지 않은 사용자만 사용이 가능하다. (isNotLoggedIn)
   // POST /user/login
   passport.authenticate("local", (err, user, info) => {
     // 서버 에러
@@ -49,7 +51,8 @@ router.post("/login", (req, res, next) => {
 });
 
 // 회원가입
-router.post("/", async (req, res, next) => {
+router.post("/", isNotLoggedIn, async (req, res, next) => {
+  // 로그인 안 한 사용자
   // POST /user
   try {
     const exUser = await User.findOne({
@@ -75,10 +78,14 @@ router.post("/", async (req, res, next) => {
 });
 
 // 로그아웃
-router.post("/logout", (req, res) => {
-  req.logout();
-  req.session.destroy();
-  res.send("ok");
+// passport@0.6이 되면서 로그인할 때 마다 세션 쿠키가 변경되고, 로그아웃할 때도 세션 쿠키가 정리됌.
+// 결론 : 콜백함수를 이용해 그 안에서 응답해야한다.
+router.post("/logout", isLoggedIn, (req, res) => {
+  // 로그인 한 사용자. (isLoggedIn)
+  req.logout(() => {
+    req.session.destroy();
+    res.send("ok");
+  });
 });
 
 module.exports = router;
