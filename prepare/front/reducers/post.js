@@ -75,26 +75,6 @@ export const addComment = (data) => ({
   data,
 });
 
-const dummyPost = (data) => ({
-  id: data.id,
-  content: data.content,
-  User: {
-    id: 1,
-    nickname: "아르미",
-  },
-  Images: [],
-  Comments: [],
-});
-
-const dummyComment = (data) => ({
-  id: shortId.generate(),
-  content: data,
-  User: {
-    id: 1,
-    nickname: "아르미",
-  },
-});
-
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -125,7 +105,7 @@ const reducer = (state = initialState, action) =>
         // dummyPost를 앞쪽에 적어줘야 게시글 보다 위에 나타난다.
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        draft.mainPosts.unShift(dummyPost(action.data));
+        draft.mainPosts.unShift(action.data);
         break;
       case ADD_POST_FAILURE:
         draft.addPostLoading = false;
@@ -152,9 +132,9 @@ const reducer = (state = initialState, action) =>
         draft.addCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS:
-        // action.data.content, postId, userId
-        const post = draft.mainPosts.find((v) => v.id === action.data.postId);
-        post.Comments.unShift(dummyComment(action.data.content));
+        // action.data.content, postId, userId  (back:Poast.id 영소문자 조심!)
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Comments.unShift(action.data);
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
         break;
