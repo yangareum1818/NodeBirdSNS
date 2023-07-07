@@ -5,6 +5,7 @@ import AppLayout from "../components/AppLayout";
 import PostCard from "../components/PostCard";
 import PostForm from "../components/PostForm";
 import { LOAD_POSTS_REQUEST } from "../reducers/post";
+import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,10 @@ const Home = () => {
 
   // 첫 로딩, 화면 시 데이터 불러오기
   useEffect(() => {
+    dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+
     console.log("first");
     dispatch({
       type: LOAD_POSTS_REQUEST,

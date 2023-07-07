@@ -7,6 +7,44 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
+// 로그인 정보 매번 불러오기 ( 로그인 유지, 사용자 정보 복구 )
+router.get("/", async (req, res, next) => {
+  // GET /user
+  try {
+    if (req.user) {
+      // 로그인 한 상태였을 때만, 사용자의 정보 보내 로그인 유지
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: req.user.id }, // 조건문 없으면 에러나는 부분.
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: Post,
+            attributes: ["id"], // id만 가져온다. (데이터 효율)
+          },
+          {
+            model: User,
+            as: "Followings",
+            attributes: ["id"], // id만 가져온다. (데이터 효율)
+          },
+          {
+            model: User,
+            as: "Followers",
+            attributes: ["id"], // id만 가져온다. (데이터 효율)
+          },
+        ],
+      });
+      res.status(200).json(fullUserWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 // 로그인
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   // 로그인은 로그인을 하지 않은 사용자만 사용이 가능하다. (isNotLoggedIn)
