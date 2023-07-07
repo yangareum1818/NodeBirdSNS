@@ -132,7 +132,7 @@ const reducer = (state = initialState, action) =>
         draft.addCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS:
-        // action.data.content, postId, userId  (back:Poast.id 영소문자 조심!)
+        // action.data.content, postId, userId  (back:PoastId 영소문자 조심!)
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
         post.Comments.unShift(action.data);
         draft.addCommentLoading = false;

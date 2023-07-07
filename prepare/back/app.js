@@ -25,8 +25,8 @@ passportConfig();
 
 app.use(
   cors({
-    origin: "*",
-    // credentials: true,
+    origin: "http://localhost:3060",
+    credentials: true, // 쿠키 전송 true
   })
 );
 app.use(express.json());
