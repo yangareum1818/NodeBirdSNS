@@ -30,6 +30,11 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           model: User,
           attributes: ["id", "nickname"],
         },
+        {
+          model: User,
+          as: "Likers",
+          attributes: ["id"],
+        },
       ],
     });
     res.status(201).json(fullPost);
@@ -39,6 +44,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// 게시글의 댓글 달기
 router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   // POST /postId/comment (동적 url(파라미터))
   try {
@@ -65,6 +71,34 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
       ],
     });
     res.status(201).json(fullComment);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// 게시글 좋아요
+router.patch("/:postId/like", async (req, res, next) => {
+  // PATCH /post/1/like
+  try {
+    const post = await Post.findOne({ where: { id: req.params.postId } });
+    if (!post) return res.status(403).send("존재하지 않은 게시물입니다.");
+    await post.addLikers(req.user.id);
+    res.json({ PostId: post.id, UserId: req.user.id });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// 게시글 좋아요 취소
+router.delete("/:postId/like", async (req, res, next) => {
+  // DELETE /post/1/like
+  try {
+    const post = await Post.findOne({ where: { id: req.params.postId } });
+    if (!post) return res.status(403).send("존재하지 않은 게시물입니다.");
+    await post.removeLikers(req.user.id);
+    res.json({ PostId: post.id, UserId: req.user.id });
   } catch (err) {
     console.error(err);
     next(err);

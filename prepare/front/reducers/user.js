@@ -201,7 +201,7 @@ const reducer = (state = initialState, action) => {
         break;
 
       case ADD_POST_TO_ME:
-        draft.me.Posts.unShift({ id: action.data });
+        draft.me.Posts.unshift({ id: action.data });
         break;
       // return {
       //   ...state,

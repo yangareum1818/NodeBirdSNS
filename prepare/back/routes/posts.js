@@ -7,7 +7,10 @@ router.get("/", async (req, res, next) => {
   try {
     const posts = await Post.findAll({
       limit: 10,
-      order: [["createdAt", "DESC"]],
+      order: [
+        ["createdAt", "DESC"],
+        [Comment, "createdAt", "DESC"],
+      ],
       include: [
         {
           model: User,
@@ -21,6 +24,11 @@ router.get("/", async (req, res, next) => {
               attributes: ["id", "nickname"],
             },
           ],
+        },
+        {
+          model: User,
+          as: "Likers",
+          attributes: ["id"],
         },
         {
           model: Image,
