@@ -19,9 +19,16 @@ router.post("/", isLoggedIn, async (req, res, next) => {
         },
         {
           model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+          ],
         },
         {
           model: User,
+          attributes: ["id", "nickname"],
         },
       ],
     });
@@ -32,7 +39,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post(`/:postId/comment`, isLoggedIn, async (req, res, next) => {
+router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   // POST /postId/comment (동적 url(파라미터))
   try {
     // 존재하는 게시글인지 검사하기 (프론트는 어느 위험에 노출될 수 있으니 back에서 처리해준다.)
@@ -43,10 +50,21 @@ router.post(`/:postId/comment`, isLoggedIn, async (req, res, next) => {
     if (!post) return res.status(403).send("존재하지 않는 게시물입니다.");
     const comment = await Comment.create({
       content: req.body.content,
-      PostId: req.params.postId, // 동적url은 params를 사용한다.
+      // params는 문자열로 이뤄진다!!!!!!!!
+      PostId: parseInt(req.params.postId, 10), // 동적url은 params를 사용한다.
       UserId: req.user.id, // 게시글을 작성한 사용자 id
     });
-    res.status(201).json(comment);
+    console.log(typeof req.params.postId);
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+      ],
+    });
+    res.status(201).json(fullComment);
   } catch (err) {
     console.error(err);
     next(err);

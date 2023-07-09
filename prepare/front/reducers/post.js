@@ -1,6 +1,4 @@
-import shortId from "shortid";
 import { produce } from "immer";
-import { faker } from "@faker-js/faker";
 // data를 어떻게 받을건지 백엔드, 서버개발자와 의논 & 원하는 데이터 객체형식을 말해도됌. (리덕스 데이터 구조)
 // db의 시퀄라이즈 : 다른 데이터와 합쳐서 주게 되어 앞글자가 대문자이다.
 export const initialState = {
@@ -20,34 +18,6 @@ export const initialState = {
   addCommentDone: false,
   addCommentError: null,
 };
-
-// faker.seed(123);
-export const generateDummyPost = (number) =>
-  Array(number)
-    .fill()
-    .map(() => ({
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: faker.internet.userName(),
-      },
-      content: faker.lorem.paragraph(),
-      Images: [
-        {
-          src: faker.image.url(),
-        },
-      ],
-      Comments: [
-        {
-          id: shortId.generate(),
-          User: {
-            id: shortId.generate(),
-            nickname: faker.internet.userName(),
-          },
-          content: faker.lorem.sentence(),
-        },
-      ],
-    }));
 
 export const LOAD_POSTS_REQUEST = "LOAD_POST_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POST_SUCCESS";
@@ -89,7 +59,7 @@ const reducer = (state = initialState, action) =>
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
         draft.mainPosts = action.data.concat(draft.mainPosts);
-        draft.hasMorePosts = draft.mainPosts.length < 50;
+        draft.hasMorePosts = draft.mainPosts.length === 10;
         break;
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false;
@@ -132,10 +102,10 @@ const reducer = (state = initialState, action) =>
         draft.addCommentError = null;
         break;
       case ADD_COMMENT_SUCCESS:
+        draft.addCommentLoading = false;
         // action.data.content, postId, userId  (back:PoastId 영소문자 조심!)
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-        post.Comments.unShift(action.data);
-        draft.addCommentLoading = false;
+        post.Comments.unshift(action.data);
         draft.addCommentDone = true;
         break;
 
@@ -158,7 +128,7 @@ const reducer = (state = initialState, action) =>
         break;
 
       default:
-        return state;
+        break;
     }
   });
 export default reducer;
