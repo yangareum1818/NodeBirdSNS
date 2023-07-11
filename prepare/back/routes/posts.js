@@ -8,8 +8,8 @@ router.get("/", async (req, res, next) => {
     const posts = await Post.findAll({
       limit: 10,
       order: [
-        ["createdAt", "DESC"],
-        [Comment, "createdAt", "DESC"],
+        ["createdAt", "DESC"], // 게시글의 생성일로 내림차순
+        [Comment, "createdAt", "DESC"], // 댓글 생성일로 내림차순
       ],
       include: [
         {

@@ -21,17 +21,17 @@ router.post("/", isLoggedIn, async (req, res, next) => {
           model: Comment,
           include: [
             {
-              model: User,
+              model: User, // 댓글 단 작성자
               attributes: ["id", "nickname"],
             },
           ],
         },
         {
-          model: User,
+          model: User, // 게시글 작성자
           attributes: ["id", "nickname"],
         },
         {
-          model: User,
+          model: User, // 좋아요 누른 사람
           as: "Likers",
           attributes: ["id"],
         },
@@ -60,7 +60,6 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
       PostId: parseInt(req.params.postId, 10), // 동적url은 params를 사용한다.
       UserId: req.user.id, // 게시글을 작성한 사용자 id
     });
-    console.log(typeof req.params.postId);
     const fullComment = await Comment.findOne({
       where: { id: comment.id },
       include: [
@@ -78,7 +77,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
 });
 
 // 게시글 좋아요
-router.patch("/:postId/like", async (req, res, next) => {
+router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
   // PATCH /post/1/like
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
@@ -92,7 +91,7 @@ router.patch("/:postId/like", async (req, res, next) => {
 });
 
 // 게시글 좋아요 취소
-router.delete("/:postId/like", async (req, res, next) => {
+router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
   // DELETE /post/1/like
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
@@ -105,9 +104,20 @@ router.delete("/:postId/like", async (req, res, next) => {
   }
 });
 
-router.delete("/", (req, res) => {
+router.delete("/:postId", isLoggedIn, async (req, res, next) => {
   // DELETE /post
-  res.json({ id: 1 });
+  try {
+    await Post.destroy({
+      where: {
+        id: req.params.postId,
+        UserId: req.user.id,
+      },
+    });
+    res.status(200).json({ PostId: parseInt(req.params.postId, 10) });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 module.exports = router;
