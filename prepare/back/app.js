@@ -1,9 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const postRouter = require("./routes/post");
+const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
 const db = require("./models");
 const dotenv = require("dotenv");
+const morgan = require("morgan");
 
 const passportConfig = require("./passport");
 const passport = require("passport");
@@ -23,10 +25,11 @@ db.sequelize
 
 passportConfig();
 
+app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "*",
-    // credentials: true,
+    origin: "http://localhost:3060",
+    credentials: true, // 쿠키 전송 true
   })
 );
 app.use(express.json());
@@ -50,15 +53,8 @@ app.get("/", (req, res) => {
   res.send("hello api");
 });
 
-app.get("/posts", (req, res) => {
-  res.json([
-    { id: 1, content: "hello01" },
-    { id: 2, content: "hello02" },
-    { id: 3, content: "hello03" },
-  ]);
-});
-
 app.use("/post", postRouter);
+app.use("/posts", postsRouter);
 app.use("/user", userRouter);
 
 // 이 사이에 에러처리 미들웨어가 내부적으로 존재한다.

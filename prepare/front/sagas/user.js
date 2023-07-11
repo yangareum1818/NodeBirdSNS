@@ -1,6 +1,9 @@
 import { all, fork, takeLatest, delay, put, call } from "redux-saga/effects";
 import axios from "axios";
 import {
+  LOAD_MY_INFO_REQUEST,
+  LOAD_MY_INFO_SUCCESS,
+  LOAD_MY_INFO_FAILURE,
   LOG_IN_REQUEST,
   LOG_OUT_REQUEST,
   LOG_IN_SUCCESS,
@@ -17,6 +20,25 @@ import {
   UNFOLLOW_SUCCESS,
   UNFOLLOW_FAILURE,
 } from "../reducers/user";
+
+function loadMyInfoAPI(data) {
+  return axios.get("/user"); // 쿠키전송은 index.js
+}
+
+function* loadMyInfo(action) {
+  try {
+    const result = yield call(loadMyInfoAPI, action.data);
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data: result.data, // 서버로 부터 사용자 데이터 받아오기.
+    });
+  } catch (error) {
+    yield put({
+      type: LOAD_MY_INFO_FAILURE,
+      error: error.response.data,
+    });
+  }
+}
 
 function logInAPI(data) {
   return axios.post("/user/login", data);
@@ -112,6 +134,10 @@ function* unfollow(action) {
   }
 }
 
+function* watchLoadMyInfo() {
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
+}
+
 function* watchLogIn() {
   yield takeLatest(LOG_IN_REQUEST, logIn);
 }
@@ -134,6 +160,7 @@ function* watchUnFollow() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadMyInfo),
     fork(watchLogIn),
     fork(watchLogOut),
     fork(watchSignUp),

@@ -10,17 +10,14 @@ const PostForm = () => {
   const [text, onChangeText, setText] = useInput("");
 
   useEffect(() => {
-    if (addPost) {
+    if (addPostDone) {
       setText("");
     }
   }, [addPostDone]);
 
   const onSubmit = useCallback(() => {
     // dispatch 자리에는 객체가 들어간다. 동적으로 action이 필요로 할때는 actionCreate라는 함수를 만들어준다.
-    dispatch({
-      type: ADD_POST_REQUEST,
-      data: text,
-    });
+    dispatch(addPost(text));
   }, [text]);
 
   const imageInput = useRef("");

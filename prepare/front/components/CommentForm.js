@@ -25,7 +25,7 @@ const CommentForm = ({ post }) => {
       type: ADD_COMMENT_REQUEST,
       data: { content: commentText, postId: post.id, userId: id },
     });
-  }, [commentText, id]);
+  }, [commentText, post.id, id]);
 
   return (
     <Form onFinish={onSubmitComment}>

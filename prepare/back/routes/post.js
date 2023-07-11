@@ -1,15 +1,123 @@
 const express = require("express");
+const { Post, Image, Comment, User } = require("../models");
+const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
+router.post("/", isLoggedIn, async (req, res, next) => {
   // POST /post
-  res.json({ id: 1, content: "hello" });
+  try {
+    const post = await Post.create({
+      content: req.body.content,
+      UserId: req.user.id, // 게시글을 작성한 사용자 id
+    });
+    const fullPost = await Post.findOne({
+      where: { id: post.id },
+      include: [
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User, // 댓글 단 작성자
+              attributes: ["id", "nickname"],
+            },
+          ],
+        },
+        {
+          model: User, // 게시글 작성자
+          attributes: ["id", "nickname"],
+        },
+        {
+          model: User, // 좋아요 누른 사람
+          as: "Likers",
+          attributes: ["id"],
+        },
+      ],
+    });
+    res.status(201).json(fullPost);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
-router.delete("/", (req, res) => {
+// 게시글의 댓글 달기
+router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
+  // POST /postId/comment (동적 url(파라미터))
+  try {
+    // 존재하는 게시글인지 검사하기 (프론트는 어느 위험에 노출될 수 있으니 back에서 처리해준다.)
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+    });
+    // return 잊지말자!! 밑에 res(응답)과 두번 응답하는 일이 발생!!
+    if (!post) return res.status(403).send("존재하지 않는 게시물입니다.");
+    const comment = await Comment.create({
+      content: req.body.content,
+      // params는 문자열로 이뤄진다!!!!!!!!
+      PostId: parseInt(req.params.postId, 10), // 동적url은 params를 사용한다.
+      UserId: req.user.id, // 게시글을 작성한 사용자 id
+    });
+    const fullComment = await Comment.findOne({
+      where: { id: comment.id },
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+      ],
+    });
+    res.status(201).json(fullComment);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// 게시글 좋아요
+router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
+  // PATCH /post/1/like
+  try {
+    const post = await Post.findOne({ where: { id: req.params.postId } });
+    if (!post) return res.status(403).send("존재하지 않은 게시물입니다.");
+    await post.addLikers(req.user.id);
+    res.json({ PostId: post.id, UserId: req.user.id });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// 게시글 좋아요 취소
+router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
+  // DELETE /post/1/like
+  try {
+    const post = await Post.findOne({ where: { id: req.params.postId } });
+    if (!post) return res.status(403).send("존재하지 않은 게시물입니다.");
+    await post.removeLikers(req.user.id);
+    res.json({ PostId: post.id, UserId: req.user.id });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.delete("/:postId", isLoggedIn, async (req, res, next) => {
   // DELETE /post
-  res.json({ id: 1 });
+  try {
+    await Post.destroy({
+      where: {
+        id: req.params.postId,
+        UserId: req.user.id,
+      },
+    });
+    res.status(200).json({ PostId: parseInt(req.params.postId, 10) });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 module.exports = router;
