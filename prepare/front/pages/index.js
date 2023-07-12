@@ -21,6 +21,7 @@ const Home = () => {
     });
 
     console.log("first");
+    console.log(mainPosts);
     dispatch({
       type: LOAD_POSTS_REQUEST,
     });

@@ -19,6 +19,9 @@ import {
   UNFOLLOW_REQUEST,
   UNFOLLOW_SUCCESS,
   UNFOLLOW_FAILURE,
+  CHANGE_NICKNAME_REQUEST,
+  CHANGE_NICKNAME_SUCCESS,
+  CHANGE_NICKNAME_FAILURE,
 } from "../reducers/user";
 
 function loadMyInfoAPI(data) {
@@ -33,6 +36,7 @@ function* loadMyInfo(action) {
       data: result.data, // 서버로 부터 사용자 데이터 받아오기.
     });
   } catch (error) {
+    console.error(error);
     yield put({
       type: LOAD_MY_INFO_FAILURE,
       error: error.response.data,
@@ -52,6 +56,7 @@ function* logIn(action) {
       data: result.data, // 서버로 부터 사용자 데이터 받아오기.
     });
   } catch (error) {
+    console.error(error);
     yield put({
       type: LOG_IN_FAILURE,
       error: error.response.data,
@@ -91,6 +96,26 @@ function* signUp(action) {
   } catch (error) {
     yield put({
       type: SIGN_UP_FAILURE,
+      error: error.response.data,
+    });
+  }
+}
+
+function changeNicknameAPI(data) {
+  return axios.patch("/user/nickname", { nickname: data });
+}
+
+function* changeNickname(action) {
+  try {
+    const result = yield call(changeNicknameAPI, action.data);
+    yield put({
+      type: CHANGE_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+    alert("닉네임이 변경되었습니다.");
+  } catch (error) {
+    yield put({
+      type: CHANGE_NICKNAME_FAILURE,
       error: error.response.data,
     });
   }
@@ -158,6 +183,10 @@ function* watchUnFollow() {
   yield takeLatest(UNFOLLOW_REQUEST, unfollow);
 }
 
+function* watchChangeNickname() {
+  yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLoadMyInfo),
@@ -166,5 +195,6 @@ export default function* userSaga() {
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnFollow),
+    fork(watchChangeNickname),
   ]);
 }
