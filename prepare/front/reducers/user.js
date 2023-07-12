@@ -58,28 +58,6 @@ export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
 export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
 export const REMOVE_POST_OF_ME = "REMOVE_POST_OF_ME";
 
-// 들어갈 더미 데이터는 따로 함수로 빼줬다.
-const dummyUser = (data) => ({
-  ...data,
-  nickname: "yangsee",
-  id: 1,
-  Posts: [{ id: 1 }],
-  Followings: [
-    { nickname: "양씨" },
-    { nickname: "보라밍" },
-    { nickname: "초롱이" },
-    { nickname: "양치기" },
-    { nickname: "화재경보기" },
-  ],
-  Followers: [
-    { nickname: "최가네" },
-    { nickname: "젤리" },
-    { nickname: "만보기" },
-    { nickname: "노랑이" },
-    { nickname: "소녀" },
-  ],
-});
-
 export const loginRequestAction = (data) => {
   return {
     type: LOG_IN_REQUEST,
@@ -160,6 +138,7 @@ const reducer = (state = initialState, action) => {
         draft.changeNicknameError = null;
         break;
       case CHANGE_NICKNAME_SUCCESS:
+        draft.me.nickname = action.data.nickname;
         draft.changeNicknameLoading = false;
         draft.changeNicknameDone = true;
         break;

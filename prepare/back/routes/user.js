@@ -39,9 +39,9 @@ router.get("/", async (req, res, next) => {
     } else {
       res.status(200).json(null);
     }
-  } catch (err) {
-    console.error(err);
-    next(err);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
@@ -124,6 +124,22 @@ router.post("/logout", isLoggedIn, (req, res) => {
     req.session.destroy();
     res.send("ok");
   });
+});
+
+// 닉네임 변경
+router.patch("/nickname", isLoggedIn, async (req, res, next) => {
+  try {
+    await User.update(
+      { nickname: req.body.nickname }, // 프론트에서 제공한 닉네임
+      {
+        where: { id: req.user.id }, // 내 아이디
+      }
+    );
+    res.status(200).json({ nickname: req.body.nickname });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 module.exports = router;

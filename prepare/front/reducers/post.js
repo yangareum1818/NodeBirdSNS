@@ -145,6 +145,7 @@ const reducer = (state = initialState, action) =>
       case REMOVE_POST_FAILURE:
         draft.removePostLoading = false;
         draft.removePostError = action.error;
+        break;
 
       case ADD_COMMENT_REQUEST:
         draft.addCommentLoading = true;

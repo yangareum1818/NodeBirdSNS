@@ -88,7 +88,7 @@ function* removePost(action) {
     });
     yield put({
       type: REMOVE_POST_OF_ME,
-      data: result.data,
+      data: action.data,
     });
   } catch (err) {
     console.error(err);
