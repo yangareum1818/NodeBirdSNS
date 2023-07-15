@@ -104,8 +104,9 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// 내가 쓴 게시글 삭제
 router.delete("/:postId", isLoggedIn, async (req, res, next) => {
-  // DELETE /post
+  // DELETE /post/1
   try {
     await Post.destroy({
       where: {
