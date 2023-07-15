@@ -23,6 +23,10 @@ const FollowButton = ({ post }) => {
       });
     }
   }, [isFollows]);
+
+  // callstack 에러가 뜨기 때문에 밑에 적어준다. ( 내 게시글이면 팔로우 버튼 hiddle)
+  if (post.User.id === me.id) return null;
+
   return (
     <Button loading={followLoading || unfollowLoading} onClick={onClickButton}>
       {isFollows ? "언팔로우" : "팔로우"}
