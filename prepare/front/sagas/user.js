@@ -132,7 +132,7 @@ function* changeNickname(action) {
 
 function followAPI(data) {
   // 데이터에 사용자 id 넣어주기
-  return axios.patch(`/user/${data}/follow`, data);
+  return axios.patch(`/user/${data}/follow`);
 }
 
 function* follow(action) {
@@ -152,7 +152,7 @@ function* follow(action) {
 }
 
 function unfollowAPI(data) {
-  return axios.delete(`/user/${data}/follow`, data);
+  return axios.delete(`/user/${data}/follow`);
 }
 
 function* unfollow(action) {

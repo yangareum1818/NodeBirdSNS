@@ -22,13 +22,13 @@ export const initialState = {
   unfollowLoading: false, // 언팔로우 시도중
   unfollowDone: false,
   unfollowError: null,
-  loadFollowersLoading: false,
+  loadFollowersLoading: false, // 팔로워 목록 불러오기 시도중
   loadFollowersDone: false,
   loadFollowersError: null,
-  loadFollowingsLoading: false,
+  loadFollowingsLoading: false, // 팔로잉 목록 불러오기 시도중
   loadFollowingsDone: false,
   loadFollowingsError: null,
-  removeFollowerLoading: false,
+  removeFollowerLoading: false, // 팔로워 차단 시도중
   removeFollowerDone: false,
   removeFollowerError: null,
   me: null,
