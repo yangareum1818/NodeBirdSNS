@@ -54,8 +54,8 @@ function* loadPosts(action) {
 }
 
 function addPostAPI(data) {
-  // back에서 데이터를 받을 때, 이름이 없어 지정해준다. (content)
-  return axios.post("/post", { content: data });
+  // formdata로 보내기 때문에 변형하지않고, data그대로 전송한다.
+  return axios.post("/post", data);
 }
 
 function* addPost(action) {

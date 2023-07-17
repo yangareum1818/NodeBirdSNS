@@ -5,6 +5,7 @@ import useInput from "../hooks/useInput";
 import {
   addPost,
   ADD_POST_REQUEST,
+  REMOVE_IMAGE,
   UPLOAD_IMAGES_REQUEST,
 } from "../reducers/post";
 
@@ -20,9 +21,22 @@ const PostForm = () => {
   }, [addPostDone]);
 
   const onSubmit = useCallback(() => {
+    if (!text || !text.trim()) {
+      return alert("게시글을 작성하세요.");
+    }
     // dispatch 자리에는 객체가 들어간다. 동적으로 action이 필요로 할때는 actionCreate라는 함수를 만들어준다.
-    dispatch(addPost(text));
-  }, [text]);
+    const formData = new FormData();
+
+    imagePaths.forEach((p) => {
+      formData.append("image", p);
+    });
+    formData.append("content", text);
+
+    return dispatch({
+      type: ADD_POST_REQUEST,
+      data: formData,
+    });
+  }, [text, imagePaths]);
 
   const imageInput = useRef("");
   const onClickImageUpload = useCallback(() => {
@@ -38,6 +52,13 @@ const PostForm = () => {
     dispatch({
       type: UPLOAD_IMAGES_REQUEST,
       data: imageFormData,
+    });
+  });
+
+  const onRemoveImage = useCallback((i) => () => {
+    dispatch({
+      type: REMOVE_IMAGE,
+      data: i,
     });
   });
 
@@ -69,11 +90,16 @@ const PostForm = () => {
         </Button>
       </div>
       <div>
-        {imagePaths.map((v) => (
+        {imagePaths.map((v, i) => (
           <div key={v.id} style={{ display: "inline-block" }}>
-            <img src={v} style={{ width: "200px" }} alt={v} />
+            <img
+              src={`http://localhost:3065/${v}`}
+              style={{ width: "200px" }}
+              alt={v}
+            />
             <div>
-              <Button>제거</Button>
+              {/* 고차함수를 활용 (해당 i 제거) */}
+              <Button onClick={onRemoveImage(i)}>제거</Button>
             </div>
           </div>
         ))}

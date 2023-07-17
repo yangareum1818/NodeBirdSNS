@@ -31,13 +31,28 @@ const upload = multer({
   limits: { fileSize: 20 * 1024 * 1024 },
 });
 
-router.post("/", isLoggedIn, async (req, res, next) => {
+// 게시글 업로드
+router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST /post
   try {
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id, // 게시글을 작성한 사용자 id
     });
+    // 받은 이미지 시퀄라이즈, DB저장
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        // 이미지를 여러개 올리면 image: [파일명.png, 파일명.png]
+        const images = await Promise.all(
+          req.body.image.map((image) => Image.create({ src: image }))
+        );
+        await post.addImages(images);
+      } else {
+        // 이미지를 하나만 올리면 image: 파일명.png
+        const image = await Image.create({ src: req.body.image });
+        await post.addImages(image);
+      }
+    }
     const fullPost = await Post.findOne({
       where: { id: post.id },
       include: [

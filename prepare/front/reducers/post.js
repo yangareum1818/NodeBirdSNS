@@ -28,6 +28,9 @@ export const initialState = {
   uploadImagesError: null,
 };
 
+// 이미지 제거 액션은 동기이다. (이미지 미리보기 : 또 다시 서버에 전송이 필요없기 때문에)
+export const REMOVE_IMAGE = "REMOVE_IMAGE";
+
 export const LOAD_POSTS_REQUEST = "LOAD_POST_REQUEST";
 export const LOAD_POSTS_SUCCESS = "LOAD_POST_SUCCESS";
 export const LOAD_POSTS_FAILURE = "LOAD_POST_FAILURE";
@@ -69,6 +72,10 @@ export const addComment = (data) => ({
 const reducer = (state = initialState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      // 서버에서 지우고 싶다면 ? REQUEST, SUCCESS, FAILURE
+      case REMOVE_IMAGE:
+        draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+        break;
       case UPLOAD_IMAGES_REQUEST:
         draft.uploadImagesLoading = true;
         draft.uploadImagesDone = false;
@@ -146,6 +153,7 @@ const reducer = (state = initialState, action) =>
         draft.addPostLoading = false;
         draft.addPostDone = true;
         draft.mainPosts.unshift(action.data);
+        draft.imagePaths = [];
         break;
       case ADD_POST_FAILURE:
         draft.addPostLoading = false;
