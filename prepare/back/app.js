@@ -6,6 +6,7 @@ const userRouter = require("./routes/user");
 const db = require("./models");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const path = require("path");
 
 const passportConfig = require("./passport");
 const passport = require("passport");
@@ -32,6 +33,7 @@ app.use(
     credentials: true, // 쿠키 전송 true
   })
 );
+app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser("nodebirdsecret"));
