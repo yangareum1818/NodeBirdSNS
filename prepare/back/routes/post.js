@@ -3,7 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const { Post, Image, Comment, User } = require("../models");
+const { Post, Image, Comment, User, Hashtag } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
@@ -35,10 +35,27 @@ const upload = multer({
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   // POST /post
   try {
+    // 해시태그 추출
+    const hashtags = req.body.content.match(/#[^\s]+/g);
+
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id, // 게시글을 작성한 사용자 id
     });
+
+    // 해시태그 등록
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) =>
+          Hashtag.findOrCreate({
+            where: { name: tag.slice(1).toLowerCase() },
+          })
+        )
+      );
+      console.log("HASHTAG", result);
+      await post.addHashtags(result.map((v) => v[0]));
+    }
+
     // 받은 이미지 시퀄라이즈, DB저장
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
