@@ -153,6 +153,7 @@ const reducer = (state = initialState, action) =>
         draft.addPostLoading = false;
         draft.addPostDone = true;
         draft.mainPosts.unshift(action.data);
+        // 게시글 업로드 완료하면 미리보기 이미지 없애기
         draft.imagePaths = [];
         break;
       case ADD_POST_FAILURE:
