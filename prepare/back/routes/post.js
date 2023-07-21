@@ -109,6 +109,93 @@ router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
   res.json(req.files.map((v) => v.filename));
 });
 
+// 리트윗하기
+router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+        },
+      ],
+    });
+
+    if (!post) return res.status(403).send("존재하지 않는 게시글입니다.");
+    if (
+      req.user.id === post.UserId ||
+      (post.Retweet && post.Retweet.UserId === req.user.id)
+    )
+      return res.status(403).send("자신의 글은 리트윗 할 수 없습니다.");
+
+    const retweetTargetId = post.RetweetId || post.id; // 리트윗한 게시글(post.RetweetId)인지 찾고, 만약 아니라면 게시글을 리트윗(post.id)한다.
+
+    // 리트윗한 게시글의 사용자id와 리트윗한 게시글id를 가져온다.
+    const exPost = await Post.findOne({
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetTargetId,
+      },
+    });
+    // 내가 리트윗한 게시글의 예외처리를 해준다.
+    if (exPost) return res.status(403).send("이미 리트윗했습니다.");
+
+    // 위의 찾아온 id들을 총합해 retweet을 한 사용자와 게시글id들을 총정리해 만들어준다.
+    const retweet = await Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId,
+      content: "retweet", // medels/post.js에서 false값을 줬기 때문에 null값이면 안된다.
+    });
+
+    // 리트윗의 id만 가져왓지만, 리트윗의 정보들도 모두 가져와야한다.
+    const retweetWithPrevPost = await Post.findOne({
+      where: { id: retweet.id },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: "Likers",
+          attributes: ["id"],
+        },
+      ],
+    });
+
+    res.status(201).json(retweetWithPrevPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // 게시글의 댓글 달기
 router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
   // POST /postId/comment (동적 url(파라미터))

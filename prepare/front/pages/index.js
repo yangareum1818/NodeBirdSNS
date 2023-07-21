@@ -10,9 +10,15 @@ import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 const Home = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
-    (state) => state.post
-  );
+  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } =
+    useSelector((state) => state.post);
+
+  useEffect(() => {
+    console.log(retweetError);
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
 
   // 첫 로딩, 화면 시 데이터 불러오기
   useEffect(() => {
