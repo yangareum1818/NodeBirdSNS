@@ -158,7 +158,7 @@ const reducer = (state = initialState, action) =>
         // 데이터가 50개가 되면 hasMorePosts가 false가 되면서 데이터를 더이상 불러오지 않는다.
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
-        draft.mainPosts = action.data.concat(draft.mainPosts);
+        draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.hasMorePosts = draft.mainPosts.length === 10;
         break;
       case LOAD_POSTS_FAILURE:
