@@ -49,9 +49,11 @@ const Home = () => {
         window.scrollY + document.documentElement.clientHeight >
           document.documentElement.scrollHeight - 300
       ) {
+        // 마지막 게시글의 id (게시글이 0개일 경우. 즉, undefined인 경우를 대비해 옵셔널체이닝)
+        const lastId = mainPosts[mainPosts.length - 1]?.id;
         dispatch({
           type: LOAD_POSTS_REQUEST,
-          // data: mainPosts[mainPosts.length - 1].id,
+          lastId,
         });
       }
     };
