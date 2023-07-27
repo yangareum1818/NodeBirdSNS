@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { END } from "redux-saga";
 
 import AppLayout from "../components/AppLayout";
 import PostCard from "../components/PostCard";
 import PostForm from "../components/PostForm";
 import { LOAD_POSTS_REQUEST } from "../reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
+import wrapper from "../store/configureStore";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -19,19 +21,6 @@ const Home = () => {
       alert(retweetError);
     }
   }, [retweetError]);
-
-  // 첫 로딩, 화면 시 데이터 불러오기
-  useEffect(() => {
-    dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
-
-    console.log("first");
-    console.log(mainPosts);
-    dispatch({
-      type: LOAD_POSTS_REQUEST,
-    });
-  }, []);
 
   // 스크롤을 어느정도 내렸을 때, 데이터 불러오기
   useEffect(() => {
@@ -75,4 +64,18 @@ const Home = () => {
     </AppLayout>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async () => {
+    store.dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    store.dispatch({
+      type: LOAD_POSTS_REQUEST,
+    });
+    store.dispatch(END);
+    await store.sagaTask.toPromise();
+  }
+);
+
 export default Home;
