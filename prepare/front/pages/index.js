@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { END } from "redux-saga";
@@ -26,11 +27,11 @@ const Home = () => {
   useEffect(() => {
     console.log("rolling");
     const onScroll = () => {
-      console.log(
-        window.scrollY,
-        document.documentElement.clientHeight,
-        document.documentElement.scrollHeight
-      );
+      // console.log(
+      //   window.scrollY,
+      //   document.documentElement.clientHeight,
+      //   document.documentElement.scrollHeight
+      // );
 
       if (
         hasMorePosts &&
@@ -65,8 +66,15 @@ const Home = () => {
   );
 };
 
+// 프론트 서버에서 백엔드로 쿠키 전달
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
+  (store) => async (context) => {
+    console.log("getServerSideProps start");
+    console.log("context", context);
+    const cookie = context.req ? context.req.headers.cookie : "";
+    if (context.req && cookie) {
+      axios.defaults.headers.Cookie = cookie;
+    }
     store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
     });
@@ -77,5 +85,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
     await store.sagaTask.toPromise();
   }
 );
-
 export default Home;

@@ -38,12 +38,12 @@ const AppLayout = ({ children }) => {
       <Menu mode="horizontal">
         <Menu.Item>
           <Link href="/" legacyBehavior>
-            <a>노드버드</a>
+            노드버드
           </Link>
         </Menu.Item>
         <Menu.Item>
           <Link href="/profile" legacyBehavior>
-            <a>프로필</a>
+            프로필
           </Link>
         </Menu.Item>
         <Menu.Item>
@@ -53,7 +53,7 @@ const AppLayout = ({ children }) => {
         {!me ? (
           <Menu.Item>
             <Link href="/signup" legacyBehavior>
-              <a>회원가입</a>
+              회원가입
             </Link>
           </Menu.Item>
         ) : null}

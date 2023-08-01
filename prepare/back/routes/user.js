@@ -9,6 +9,7 @@ const router = express.Router();
 
 // 로그인 정보 매번 불러오기 ( 로그인 유지, 사용자 정보 복구 )
 router.get("/", async (req, res, next) => {
+  console.log(req.headers);
   // GET /user
   try {
     if (req.user) {

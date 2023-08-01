@@ -31,15 +31,38 @@ import {
   LOAD_FOLLOWINGS_REQUEST,
   REMOVE_FOLLOWER_SUCCESS,
   REMOVE_FOLLOWER_FAILURE,
+  LOAD_USER_REQUEST,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_FAILURE,
 } from "../reducers/user";
 
-function loadMyInfoAPI(data) {
+function loadUserAPI(data) {
+  return axios.get(`/user${data}`);
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: error.response.data,
+    });
+  }
+}
+
+function loadMyInfoAPI() {
   return axios.get("/user"); // 쿠키전송은 index.js
 }
 
-function* loadMyInfo(action) {
+function* loadMyInfo() {
   try {
-    const result = yield call(loadMyInfoAPI, action.data);
+    const result = yield call(loadMyInfoAPI);
     yield put({
       type: LOAD_MY_INFO_SUCCESS,
       data: result.data, // 서버로 부터 사용자 데이터 받아오기.
@@ -230,6 +253,10 @@ function* removeFollower(action) {
   }
 }
 
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
+
 function* watchLoadMyInfo() {
   yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
@@ -272,6 +299,7 @@ function* watchRemoveFollower() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadUser),
     fork(watchLoadMyInfo),
     fork(watchLogIn),
     fork(watchLogOut),

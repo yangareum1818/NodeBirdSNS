@@ -10,7 +10,7 @@ const PostCardContent = ({ postData }) => {
           // #을 때기 위해 slice(1)
           return (
             <Link href={`/hashtag/${v.slice(1)}`} key={v} legacyBehavior>
-              <a>{v}</a>
+              {v}
             </Link>
           );
         }
