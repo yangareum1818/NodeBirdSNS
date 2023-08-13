@@ -37,7 +37,7 @@ import {
 } from "../reducers/user";
 
 function loadUserAPI(data) {
-  return axios.get(`/user${data}`);
+  return axios.get(`/user/${data}`);
 }
 
 function* loadUser(action) {

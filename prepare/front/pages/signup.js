@@ -1,12 +1,16 @@
-import { Button, Checkbox, Form, Input } from "antd";
-import Head from "next/head";
-import React, { useCallback, useEffect, useState } from "react";
+import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import Router from "next/router";
-import styled from "styled-components";
+import Head from "next/head";
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, Checkbox, Form, Input } from "antd";
+import { END } from "redux-saga";
+import axios from "axios";
+
 import AppLayout from "../components/AppLayout";
 import useInput from "../hooks/useInput";
-import { SIGN_UP_REQUEST } from "../reducers/user";
+import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from "../reducers/user";
+import wrapper from "../store/configureStore";
 
 const ErrorMessage = styled.p`
   color: #f00;
@@ -132,4 +136,22 @@ const Signup = () => {
     </AppLayout>
   );
 };
+
+// 프론트 서버에서 백엔드로 쿠키 전달
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    console.log("getServerSideProps start");
+    console.log("context", context);
+    const cookie = context.req ? context.req.headers.cookie : "";
+    if (context.req && cookie) {
+      axios.defaults.headers.Cookie = cookie;
+    }
+    store.dispatch({
+      type: LOAD_MY_INFO_REQUEST,
+    });
+    store.dispatch(END);
+    await store.sagaTask.toPromise();
+  }
+);
+
 export default Signup;

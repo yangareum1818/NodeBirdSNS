@@ -46,6 +46,51 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// 특정한 사용자 정보를 가져오는 ROUTER (내 정보, 게시글만)
+router.get("/:userId", async (req, res, next) => {
+  console.log(req.headers);
+  // GET /user
+  try {
+    // 로그인 한 상태였을 때만, 사용자의 정보 보내 로그인 유지
+    const fullUserWithoutPassword = await User.findOne({
+      where: {
+        id: req.params.userId,
+      }, // 조건문 없으면 에러나는 부분.
+      attributes: {
+        exclude: ["password"],
+      },
+      include: [
+        {
+          model: Post,
+          attributes: ["id"], // id만 가져온다. (데이터 효율)
+        },
+        {
+          model: User,
+          as: "Followings",
+          attributes: ["id"], // id만 가져온다. (데이터 효율)
+        },
+        {
+          model: User,
+          as: "Followers",
+          attributes: ["id"], // id만 가져온다. (데이터 효율)
+        },
+      ],
+    });
+    if (fullUserWithoutPassword) {
+      const data = fullUserWithoutPassword.toJSON();
+      data.Posts = data.Posts.length;
+      data.Followers = data.Followers.length;
+      data.Followings = data.Followings.length;
+      res.status(200).json(fullUserWithoutPassword);
+    } else {
+      res.status(404).json("존재하지 않는 사용자입니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // 로그인
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   // 로그인은 로그인을 하지 않은 사용자만 사용이 가능하다. (isNotLoggedIn)
