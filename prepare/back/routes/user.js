@@ -46,7 +46,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// 특정한 사용자 정보를 가져오는 ROUTER (내 정보, 게시글만)
+// 특정 사용자 정보를 가져오는 ROUTER (내 정보, 게시글만)
 router.get("/:userId", async (req, res, next) => {
   console.log(req.headers);
   // GET /user
@@ -81,7 +81,7 @@ router.get("/:userId", async (req, res, next) => {
       data.Posts = data.Posts.length;
       data.Followers = data.Followers.length;
       data.Followings = data.Followings.length;
-      res.status(200).json(fullUserWithoutPassword);
+      res.status(200).json(data);
     } else {
       res.status(404).json("존재하지 않는 사용자입니다.");
     }

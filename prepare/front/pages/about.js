@@ -10,7 +10,7 @@ import { LOAD_USER_REQUEST } from "../reducers/user";
 
 const About = () => {
   const { userInfo } = useSelector((state) => state.user);
-
+  console.log("userInfo", userInfo);
   return (
     <AppLayout>
       <Head>
@@ -27,17 +27,17 @@ const About = () => {
             <div key="following">
               팔로잉
               <br />
-              {userInfo.Following}
+              {userInfo.Followings}
             </div>,
             <div key="follower">
               팔로잉
               <br />
-              {userInfo.Followers.length}
+              {userInfo.Followers}
             </div>,
           ]}
         >
           <Card.Meta
-            avatar={<Avatar>{userInfo.nickname[0]}</Avatar>}
+            avatar={<Avatar>{userInfo.nickname[8]}</Avatar>}
             title={userInfo.nickname}
             description="노드버드 매니아"
           />
