@@ -33,8 +33,31 @@ import {
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
+  LOAD_POST_REQUEST,
+  LOAD_POST_SUCCESS,
+  LOAD_POST_FAILURE,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
+
+function loadPostAPI(data) {
+  return axios.get(`/post/${data}`);
+}
+
+function* loadPost(action) {
+  try {
+    const result = yield call(loadPostAPI, action.data);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: LOAD_POST_FAILURE,
+      error: error.response.data,
+    });
+  }
+}
 
 function loadPostsAPI(lastId) {
   return axios.get(`/posts?lastId=${lastId || 0}`); // 게시글이 0개일 경우를 대비한다.
@@ -209,6 +232,10 @@ function* retweet(action) {
   }
 }
 
+function* watchLoadPost() {
+  yield takeLatest(LOAD_POST_REQUEST, loadPost);
+}
+
 function* watchLoadPosts() {
   yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
 }
@@ -248,6 +275,7 @@ export default function* postSaga() {
     fork(watchLikePost),
     fork(watchUnLikePost),
     fork(watchAddPost),
+    fork(watchLoadPost),
     fork(watchLoadPosts),
     fork(watchAddComment),
     fork(watchRemovePost),

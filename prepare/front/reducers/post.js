@@ -3,6 +3,7 @@ import { produce } from "immer";
 // db의 시퀄라이즈 : 다른 데이터와 합쳐서 주게 되어 앞글자가 대문자이다.
 export const initialState = {
   mainPosts: [],
+  singlePost: null,
   imagePaths: [],
   hasMorePosts: true,
   likePostLoading: false,
@@ -11,6 +12,9 @@ export const initialState = {
   unlikePostLoading: false,
   unlikePostDone: false,
   unlikePostError: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
   loadPostsLoading: false,
   loadPostsDone: false,
   loadPostsError: null,
@@ -34,9 +38,13 @@ export const initialState = {
 // 이미지 제거 액션은 동기이다. (이미지 미리보기 : 또 다시 서버에 전송이 필요없기 때문에)
 export const REMOVE_IMAGE = "REMOVE_IMAGE";
 
-export const LOAD_POSTS_REQUEST = "LOAD_POST_REQUEST";
-export const LOAD_POSTS_SUCCESS = "LOAD_POST_SUCCESS";
-export const LOAD_POSTS_FAILURE = "LOAD_POST_FAILURE";
+export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
+export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
+export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
+
+export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
+export const LOAD_POSTS_SUCCESS = "LOAD_POSTS_SUCCESS";
+export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
@@ -146,6 +154,21 @@ const reducer = (state = initialState, action) =>
       case UNLIKE_POST_FAILURE:
         draft.unlikePostLoading = false;
         draft.unlikePostError = action.error;
+        break;
+
+      case LOAD_POST_REQUEST:
+        draft.loadPostLoading = true;
+        draft.loadPostDone = false;
+        draft.loadPostError = null;
+        break;
+      case LOAD_POST_SUCCESS:
+        draft.loadPostLoading = false;
+        draft.loadPostDone = true;
+        draft.singlePost = action.data;
+        break;
+      case LOAD_POST_FAILURE:
+        draft.loadPostLoading = false;
+        draft.loadPostError = action.error;
         break;
 
       case LOAD_POSTS_REQUEST:

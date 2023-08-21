@@ -147,7 +147,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       axios.defaults.headers.Cookie = cookie;
     }
     store.dispatch({
-      type: LOAD_MY_INFO_REQUEST,
+      type: LOAD_MY_IMNFO_REQUEST,
     });
     store.dispatch(END);
     await store.sagaTask.toPromise();
