@@ -3,6 +3,7 @@ const cors = require("cors");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
+const hashtagRouter = require("./routes/hashtag");
 const db = require("./models");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
@@ -58,6 +59,7 @@ app.get("/", (req, res) => {
 app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
+app.use("/hashtag", hashtagRouter);
 
 // 이 사이에 에러처리 미들웨어가 내부적으로 존재한다.
 

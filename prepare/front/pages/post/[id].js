@@ -19,6 +19,7 @@ const Post = () => {
   return (
     <AppLayout>
       <Head>
+        <title>NodeBird | {singlePost.User.nickname}님의 글</title>
         <meta name="description" content={singlePost.content} />
         <meta
           property="og:title"
@@ -34,7 +35,6 @@ const Post = () => {
           }
         />
         <meta propert="og:url" content={`https://nodebird.com/post/${id}`} />
-        <title>NodeBird | {singlePost.User.nickname}님의 글</title>
       </Head>
       <PostCard post={singlePost} />
     </AppLayout>
@@ -49,7 +49,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       if (req && cookie) {
         axios.defaults.headers.Cookie = cookie;
       }
-      console.log("req", req);
+      // console.log("req", req);
       store.dispatch({
         type: LOAD_MY_INFO_REQUEST,
       });

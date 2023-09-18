@@ -38,6 +38,14 @@ export const initialState = {
 // 이미지 제거 액션은 동기이다. (이미지 미리보기 : 또 다시 서버에 전송이 필요없기 때문에)
 export const REMOVE_IMAGE = "REMOVE_IMAGE";
 
+export const LOAD_HASHTAG_POSTS_REQUEST = "LOAD_HASHTAG_POSTS_REQUEST";
+export const LOAD_HASHTAG_POSTS_SUCCESS = "LOAD_HASHTAG_POSTS_SUCCESS";
+export const LOAD_HASHTAG_POSTS_FAILURE = "LOAD_HASHTAG_POSTS_FAILURE";
+
+export const LOAD_USER_POSTS_REQUEST = "LOAD_USER_POSTS_REQUEST";
+export const LOAD_USER_POSTS_SUCCESS = "LOAD_USER_POSTS_SUCCESS";
+export const LOAD_USER_POSTS_FAILURE = "LOAD_USER_POSTS_FAILURE";
+
 export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
 export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
 export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
@@ -171,19 +179,25 @@ const reducer = (state = initialState, action) =>
         draft.loadPostError = action.error;
         break;
 
+      case LOAD_USER_POSTS_REQUEST:
+      case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_POSTS_REQUEST:
         draft.loadPostsLoading = true;
         draft.loadPostsDone = false;
         draft.loadPostsError = null;
         break;
+      case LOAD_USER_POSTS_SUCCESS:
+      case LOAD_HASHTAG_POSTS_SUCCESS:
       case LOAD_POSTS_SUCCESS:
         // 불러온 데이터에 기존데이터를 10개씩 계속 추가 (action.data : 불러온 데이터)
         // 데이터가 50개가 되면 hasMorePosts가 false가 되면서 데이터를 더이상 불러오지 않는다.
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
         draft.mainPosts = draft.mainPosts.concat(action.data);
-        draft.hasMorePosts = draft.mainPosts.length === 10;
+        draft.hasMorePosts = action.data.length === 10;
         break;
+      case LOAD_USER_POSTS_FAILURE:
+      case LOAD_HASHTAG_POSTS_FAILURE:
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false;
         draft.loadPostsError = action.error;
