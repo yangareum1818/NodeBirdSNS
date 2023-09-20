@@ -33,6 +33,7 @@ const Profile = () => {
   }, [me && me.id]);
 
   if (!me) return null;
+  console.log(me.Followers.length, me.Followings.length);
   return (
     <>
       <Head>

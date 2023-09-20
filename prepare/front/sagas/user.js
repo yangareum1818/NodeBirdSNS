@@ -107,6 +107,7 @@ function* logOut() {
       type: LOG_OUT_SUCCESS,
     });
   } catch (error) {
+    console.error(error);
     yield put({
       type: LOG_OUT_FAILURE,
       error: error.response.data,
@@ -126,6 +127,7 @@ function* signUp(action) {
       type: SIGN_UP_SUCCESS,
     });
   } catch (error) {
+    console.error(error);
     yield put({
       type: SIGN_UP_FAILURE,
       error: error.response.data,
@@ -146,6 +148,7 @@ function* changeNickname(action) {
     });
     alert("닉네임이 변경되었습니다.");
   } catch (error) {
+    console.error(error);
     yield put({
       type: CHANGE_NICKNAME_FAILURE,
       error: error.response.data,
@@ -186,6 +189,7 @@ function* unfollow(action) {
       data: result.data,
     });
   } catch (error) {
+    console.error(error);
     yield put({
       type: UNFOLLOW_FAILURE,
       error: error.response.data,
