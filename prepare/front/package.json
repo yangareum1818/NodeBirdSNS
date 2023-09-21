@@ -27,7 +27,8 @@
     "redux-saga": "^1.2.3",
     "shortid": "^2.2.16",
     "slick-carousel": "^1.8.1",
-    "styled-components": "^6.0.7"
+    "styled-components": "^6.0.7",
+    "swr": "^2.2.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

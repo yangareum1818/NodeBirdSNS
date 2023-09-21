@@ -1,39 +1,53 @@
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Router from "next/router";
 import { END } from "redux-saga";
 import axios from "axios";
+import useSWR from "swr";
 
 import AppLayout from "../components/AppLayout";
 import FollowList from "../components/FollowList";
 import NicknameEditForm from "../components/NicknameEditForm";
-import {
-  LOAD_MY_INFO_REQUEST,
-  LOAD_FOLLOWERS_REQUEST,
-  LOAD_FOLLOWINGS_REQUEST,
-} from "../reducers/user";
+import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import wrapper from "../store/configureStore";
 
-const Profile = () => {
-  const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.user);
+const fetcher = (url) =>
+  axios.get(url, { withCredentials: true }).then((result) => result.data);
 
-  useEffect(() => {
-    dispatch({
-      type: LOAD_FOLLOWERS_REQUEST,
-    });
-    dispatch({
-      type: LOAD_FOLLOWINGS_REQUEST,
-    });
-  }, []);
+const Profile = () => {
+  const { me } = useSelector((state) => state.user);
+  const [followersLimit, setFollowersLimit] = useState(3);
+  const [followingsLimit, setFollowingsLimit] = useState(3);
+
+  const { data: followersData, error: followerError } = useSWR(
+    `http://localhost:3065/user/followers?limit=${followersLimit}`,
+    fetcher
+  );
+  const { data: followingsData, error: followingError } = useSWR(
+    `http://localhost:3065/user/followings?limit=${followingsLimit}`,
+    fetcher
+  );
 
   useEffect(() => {
     if (!(me && me.id)) Router.push("/");
   }, [me && me.id]);
 
-  if (!me) return null;
-  console.log(me.Followers.length, me.Followings.length);
+  const loadMoreFollowings = useCallback(() => {
+    setFollowingsLimit((prev) => prev + 3);
+  }, []);
+
+  const loadMoreFollowers = useCallback(() => {
+    setFollowersLimit((prev) => prev + 3);
+  }, []);
+
+  if (followerError || followingError) {
+    console.error(followerError, followingError);
+    return <div>팔로잉 / 팔로워 로딩중 에러가 발생했습니다.</div>;
+  }
+
+  if (!me) return <div>내 정보 로딩중 ...</div>;
+
   return (
     <>
       <Head>
@@ -41,8 +55,18 @@ const Profile = () => {
       </Head>
       <AppLayout>
         <NicknameEditForm />
-        <FollowList header="팔로잉" data={me.Followings} />
-        <FollowList header="팔로워" data={me.Followers} />
+        <FollowList
+          header="팔로잉"
+          data={followingsData}
+          onClickMore={loadMoreFollowings}
+          loading={!followingError && !followingsData}
+        />
+        <FollowList
+          header="팔로워"
+          data={followersData}
+          onClickMore={loadMoreFollowers}
+          loading={!followersData && !followerError}
+        />
       </AppLayout>
     </>
   );
