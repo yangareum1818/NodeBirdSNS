@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { Col, Input, Menu, Row } from "antd";
@@ -7,6 +7,8 @@ import styled, { createGlobalStyle } from "styled-components";
 
 import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
+import useInput from "../hooks/useInput";
+import Router from "next/router";
 
 const Global = createGlobalStyle`
   .ant-row {
@@ -31,7 +33,13 @@ const LinkTitle = styled.span`
 `;
 
 const AppLayout = ({ children }) => {
+  const [searchInput, onChangeSearchInput] = useInput("");
   const { me } = useSelector((state) => state.user);
+
+  const onSearch = useCallback(() => {
+    Router.push(`/hashtag/${searchInput}`);
+  }, [searchInput]);
+
   return (
     <div>
       <Global />
@@ -47,7 +55,12 @@ const AppLayout = ({ children }) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <SearchInput enterButton="Search" />
+          <SearchInput
+            enterButton="Search"
+            value={searchInput}
+            onChange={onChangeSearchInput}
+            onSearch={onSearch}
+          />
         </Menu.Item>
         {/* 로그인 되었을 때 회원가입 메뉴 보이지 않기. */}
         {!me ? (
