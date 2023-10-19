@@ -59,7 +59,12 @@ const PostImages = ({ images }) => {
       <div style={{ fontSize: 0 }}>
         <img
           role={"presentation"}
-          style={{ width: "50%", cursor: "pointer" }}
+          style={{
+            display: "inline-block",
+            width: "50%",
+            cursor: "pointer",
+            verticalAlign: "middle",
+          }}
           src={`http://localhost:3065/${images[0].src}`}
           alt={images[0].src}
           onClick={onZoom}
