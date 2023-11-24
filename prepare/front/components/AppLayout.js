@@ -40,37 +40,37 @@ const AppLayout = ({ children }) => {
     Router.push(`/hashtag/${searchInput}`);
   }, [searchInput]);
 
+  const menuitems = [
+    {
+      key: "nodebird",
+      label: <Link href="/">노드버드</Link>,
+    },
+    {
+      key: "profile",
+      label: <Link href="/profile">프로필</Link>,
+    },
+    {
+      key: "search",
+      label: (
+        <SearchInput
+          enterButton="Search"
+          value={searchInput}
+          onChange={onChangeSearchInput}
+          onSearch={onSearch}
+        />
+      ),
+    },
+    {
+      key: "signup",
+      label: <Link href="/signup">회원가입</Link>,
+    },
+  ];
+
   return (
     <div>
       <Global />
-      <Menu mode="horizontal">
-        <Menu.Item>
-          <Link href="/" legacyBehavior>
-            노드버드
-          </Link>
-        </Menu.Item>
-        <Menu.Item>
-          <Link href="/profile" legacyBehavior>
-            프로필
-          </Link>
-        </Menu.Item>
-        <Menu.Item>
-          <SearchInput
-            enterButton="Search"
-            value={searchInput}
-            onChange={onChangeSearchInput}
-            onSearch={onSearch}
-          />
-        </Menu.Item>
-        {/* 로그인 되었을 때 회원가입 메뉴 보이지 않기. */}
-        {!me ? (
-          <Menu.Item>
-            <Link href="/signup" legacyBehavior>
-              회원가입
-            </Link>
-          </Menu.Item>
-        ) : null}
-      </Menu>
+      {/* 로그인 되었을 때 회원가입 메뉴 보이지 않기. */}
+      <Menu mode="horizontal" items={menuitems} />
       <Row gutter={8}>
         <Col xs={24} md={6}>
           {me ? <UserProfile /> : <LoginForm />}
