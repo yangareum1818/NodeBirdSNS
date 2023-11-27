@@ -7,11 +7,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const NodeBird = ({ Component, ...rest }) => {
-  const { store, props } = wrapper.useWrappedStore(rest)
+  const { store, props } = wrapper.useWrappedStore(rest);
   const { pageProps } = props;
 
   console.log(props);
-  
+
   return (
     <Provider store={store}>
       <Head>
@@ -20,7 +20,8 @@ const NodeBird = ({ Component, ...rest }) => {
         <link rel="icon" href="https://nodebird.com/favicon.ico" />
         <title>NodeBird</title>
       </Head>
-      <Component pageProps={...pageProps} />
+      <Component />
+      {/* pageProps={...pageProps} */}
     </Provider>
   );
 };
