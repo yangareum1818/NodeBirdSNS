@@ -50,6 +50,12 @@ export const logOut = createAsyncThunk("user/logOut", async () => {
   return response.data;
 });
 
+export const loadMyInfo = createAsyncThunk("user/loadMyInfo", async () => {
+  const response = await axios.get("/user");
+  console.log("=> (user.js:65) response", response.data);
+  return response.data || null;
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -83,6 +89,20 @@ const userSlice = createSlice({
       .addCase(logOut.rejected, (state, action) => {
         state.logOutLoading = false;
         state.logOutError = action.error.message;
+      })
+      .addCase(loadMyInfo.pending, (state) => {
+        state.loadMyInfoLoading = true;
+        state.loadMyInfoDone = false;
+        state.loadMyInfoError = false;
+      })
+      .addCase(loadMyInfo.fulfilled, (state, action) => {
+        state.loadMyInfoLoading = false;
+        state.me = action.payload || null;
+        state.loadMyInfoDone = true;
+      })
+      .addCase(loadMyInfo.rejected, (state, action) => {
+        state.loadMyInfoLoading = false;
+        state.loadMyInfoError = action.error.message;
       }),
 });
 
@@ -100,21 +120,6 @@ export const logoutRequestAction = () => ({
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
-      case LOAD_MY_INFO_REQUEST:
-        draft.loadMyInfoLoading = true;
-        draft.loadMyInfoDone = false;
-        draft.loadMyInfoError = null;
-        break;
-      case LOAD_MY_INFO_SUCCESS:
-        draft.loadMyInfoLoading = false;
-        draft.loadMyInfoDone = true;
-        draft.me = action.data;
-        break;
-      case LOAD_MY_INFO_FAILURE:
-        draft.loadMyInfoLoading = false;
-        draft.loadMyInfoError = action.error;
-        break;
-
       case LOAD_USER_REQUEST:
         draft.loadUserLoading = true;
         draft.loadUserDone = false;
@@ -128,36 +133,6 @@ const reducer = (state = initialState, action) => {
       case LOAD_USER_FAILURE:
         draft.loadUserLoading = false;
         draft.loadUserError = action.error;
-        break;
-
-      case LOG_IN_REQUEST:
-        draft.logInLoading = true;
-        draft.logInDone = false;
-        draft.logInError = null;
-        break;
-      case LOG_IN_SUCCESS:
-        draft.logInLoading = false;
-        draft.logInDone = true;
-        draft.me = action.data;
-        break;
-      case LOG_IN_FAILURE:
-        draft.logInLoading = false;
-        draft.logInError = action.error;
-        break;
-
-      case LOG_OUT_REQUEST:
-        draft.logOutLoading = true;
-        draft.logOutDone = false;
-        draft.logOutError = null;
-        break;
-      case LOG_OUT_SUCCESS:
-        draft.logOutLoading = false;
-        draft.logOutDone = true;
-        draft.me = null;
-        break;
-      case LOG_OUT_FAILURE:
-        draft.logOutLoading = false;
-        draft.logOutError = action.error;
         break;
 
       case SIGN_UP_REQUEST:
