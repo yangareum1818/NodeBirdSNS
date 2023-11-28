@@ -1,5 +1,8 @@
-/.next
+.next
 /node_modules
+
+# Dependency directories
+node_modules/
 
 .DS_Store
 .env
@@ -10,3 +13,6 @@
 
 yarn-error.log*
 yarn.lock*
+
+#Serverless directtories
+node_modules

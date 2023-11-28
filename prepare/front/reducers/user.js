@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { produce } from "immer";
+import { HYDRATE } from "next-redux-wrapper";
 
 export const initialState = {
   loadUserLoading: false, // 유저 정보 가져오기 시도중
@@ -50,18 +51,81 @@ export const logOut = createAsyncThunk("user/logOut", async () => {
   return response.data;
 });
 
+export const signup = createAsyncThunk("user/signup", async () => {
+  const response = await axios.post("/user/signup");
+  return response.data;
+});
+
 export const loadMyInfo = createAsyncThunk("user/loadMyInfo", async () => {
   const response = await axios.get("/user");
   console.log("=> (user.js:65) response", response.data);
   return response.data || null;
 });
 
+export const changeNickname = createAsyncThunk(
+  "user/changeNickname",
+  async (data) => {
+    const response = await axios.patch("/user/nickname", { nickname: data });
+    return response.data;
+  }
+);
+
+export const follow = createAsyncThunk("user/follow", async (data) => {
+  const response = await axios.patch(`/user/${data}/follow`);
+  return response.data;
+});
+
+export const unfollow = createAsyncThunk("user/unfollow", async (data) => {
+  const response = await axios.delete(`/user/${data}/follow`);
+  return response.data;
+});
+
+export const loadFollowings = createAsyncThunk(
+  "user/loadFollowings",
+  async (data) => {
+    const response = await axios.get("/user/followings", data);
+    return response.data;
+  }
+);
+
+export const loadFollowers = createAsyncThunk(
+  "user/loadFollowers",
+  async (data) => {
+    const response = await axios.get("/user/followers", data);
+    return response.data;
+  }
+);
+
+export const loadUser = createAsyncThunk("user/loadUser", async (data) => {
+  const response = await axios.get(`/user/${data}`);
+  return response.data;
+});
+
+export const removeFollower = createAsyncThunk(
+  "user/removeFollower",
+  async (data) => {
+    const response = await axios.delete(`/user/follower/${data}`);
+    return response.data;
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    addPostToMe(draft, action) {
+      draft.me.Posts.unshift({ id: action.payload });
+    },
+    removePostOfMe(draft, action) {
+      draft.me.Posts.filter((v) => v.id !== action.payload);
+    },
+  },
   extraReducers: (builder) =>
     builder
+      .addCase(HYDRATE, (state, action) => ({
+        ...state,
+        ...action.payload.user,
+      }))
       .addCase(logIn.pending, (state) => {
         state.logInLoading = true;
         state.logInError = false;
@@ -76,195 +140,149 @@ const userSlice = createSlice({
         state.logInLoading = false;
         state.logInError = action.error.message;
       })
-      .addCase(logOut.pending, (state) => {
-        state.logOutLoading = true;
-        state.logOutDone = false;
-        state.logOutError = false;
+      .addCase(logOut.pending, (draft) => {
+        draft.logOutLoading = true;
+        draft.logOutDone = false;
+        draft.logOutError = null;
       })
-      .addCase(logOut.fulfilled, (state, action) => {
-        state.logOutLoading = false;
-        state.me = null;
-        state.logOutDone = true;
+      .addCase(logOut.fulfilled, (draft) => {
+        draft.logOutLoading = false;
+        draft.logOutDone = true;
       })
-      .addCase(logOut.rejected, (state, action) => {
-        state.logOutLoading = false;
-        state.logOutError = action.error.message;
+      .addCase(logOut.rejected, (draft, action) => {
+        draft.logOutLoading = false;
+        draft.logOutError = action.error.message;
       })
-      .addCase(loadMyInfo.pending, (state) => {
-        state.loadMyInfoLoading = true;
-        state.loadMyInfoDone = false;
-        state.loadMyInfoError = false;
-      })
-      .addCase(loadMyInfo.fulfilled, (state, action) => {
-        state.loadMyInfoLoading = false;
-        state.me = action.payload || null;
-        state.loadMyInfoDone = true;
-      })
-      .addCase(loadMyInfo.rejected, (state, action) => {
-        state.loadMyInfoLoading = false;
-        state.loadMyInfoError = action.error.message;
-      }),
-});
-
-export const loginRequestAction = (data) => {
-  return {
-    type: LOG_IN_REQUEST,
-    data,
-  };
-};
-
-export const logoutRequestAction = () => ({
-  type: LOG_OUT_REQUEST,
-});
-
-const reducer = (state = initialState, action) => {
-  return produce(state, (draft) => {
-    switch (action.type) {
-      case LOAD_USER_REQUEST:
-        draft.loadUserLoading = true;
-        draft.loadUserDone = false;
-        draft.loadUserError = null;
-        break;
-      case LOAD_USER_SUCCESS:
-        draft.loadUserLoading = false;
-        draft.loadUserDone = true;
-        draft.userInfo = action.data;
-        break;
-      case LOAD_USER_FAILURE:
-        draft.loadUserLoading = false;
-        draft.loadUserError = action.error;
-        break;
-
-      case SIGN_UP_REQUEST:
+      .addCase(signup.pending, (draft) => {
         draft.signUpLoading = true;
         draft.signUpDone = false;
         draft.signUpError = null;
-        break;
-      case SIGN_UP_SUCCESS:
+      })
+      .addCase(signup.fulfilled, (draft) => {
         draft.signUpLoading = false;
         draft.signUpDone = true;
-        draft.me = null;
-        break;
-      case SIGN_UP_FAILURE:
+      })
+      .addCase(signup.rejected, (draft, action) => {
         draft.signUpLoading = false;
-        draft.signUpError = action.error;
-        break;
-
-      case CHANGE_NICKNAME_REQUEST:
+        draft.signUpError = action.error.message;
+      })
+      .addCase(loadMyInfo.pending, (draft) => {
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoDone = false;
+        draft.loadMyInfoError = null;
+      })
+      .addCase(loadMyInfo.fulfilled, (draft, action) => {
+        draft.loadMyInfoLoading = false;
+        draft.me = action.payload || null;
+        draft.loadMyInfoDone = true;
+      })
+      .addCase(loadMyInfo.rejected, (draft, action) => {
+        draft.loadMyInfoLoading = false;
+        draft.loadMyInfoError = action.error.message;
+      })
+      .addCase(changeNickname.pending, (draft) => {
         draft.changeNicknameLoading = true;
         draft.changeNicknameDone = false;
         draft.changeNicknameError = null;
-        break;
-      case CHANGE_NICKNAME_SUCCESS:
-        draft.me.nickname = action.data.nickname;
+      })
+      .addCase(changeNickname.fulfilled, (draft, action) => {
         draft.changeNicknameLoading = false;
+        draft.me.nickname = action.payload.nickname;
         draft.changeNicknameDone = true;
-        break;
-      case CHANGE_NICKNAME_FAILURE:
+      })
+      .addCase(changeNickname.rejected, (draft, action) => {
         draft.changeNicknameLoading = false;
-        draft.changeNicknameError = action.error;
-        break;
-
-      case FOLLOW_REQUEST:
+        draft.changeNicknameError = action.error.message;
+      })
+      .addCase(follow.pending, (draft) => {
         draft.followLoading = true;
         draft.followDone = false;
         draft.followError = null;
-        break;
-      case FOLLOW_SUCCESS:
+      })
+      .addCase(follow.fulfilled, (draft, action) => {
         draft.followLoading = false;
-        draft.me.Followings.push({ id: action.data.UserId });
+        draft.me.Followings.push({ id: action.payload.UserId });
         draft.followDone = true;
-        break;
-      case FOLLOW_FAILURE:
+      })
+      .addCase(follow.rejected, (draft, action) => {
         draft.followLoading = false;
-        draft.followError = action.error;
-        break;
-
-      case UNFOLLOW_REQUEST:
+        draft.followError = action.error.message;
+      })
+      .addCase(unfollow.pending, (draft) => {
         draft.unfollowLoading = true;
         draft.unfollowDone = false;
         draft.unfollowError = null;
-        break;
-      case UNFOLLOW_SUCCESS:
+      })
+      .addCase(unfollow.fulfilled, (draft, action) => {
         draft.unfollowLoading = false;
         draft.me.Followings = draft.me.Followings.filter(
-          (v) => v.id !== action.data.UserId
+          (v) => v.id !== action.payload.UserId
         );
         draft.unfollowDone = true;
-        break;
-      case UNFOLLOW_FAILURE:
+      })
+      .addCase(unfollow.rejected, (draft, action) => {
         draft.unfollowLoading = false;
-        draft.unfollowError = action.error;
-        break;
-
-      case LOAD_FOLLOWERS_REQUEST:
-        draft.loadFollowersLoading = true;
-        draft.loadFollowersDone = false;
-        draft.loadFollowersError = null;
-        break;
-      case LOAD_FOLLOWERS_SUCCESS:
-        draft.loadFollowersLoading = false;
-        draft.loadFollowersDone = true;
-        draft.me.Followers = action.data;
-        break;
-      case LOAD_FOLLOWERS_FAILURE:
-        draft.loadFollowersLoading = false;
-        draft.loadFollowersError = action.error;
-        break;
-
-      case LOAD_FOLLOWINGS_REQUEST:
+        draft.unfollowError = action.error.message;
+      })
+      .addCase(loadFollowings.pending, (draft) => {
         draft.loadFollowingsLoading = true;
         draft.loadFollowingsDone = false;
         draft.loadFollowingsError = null;
-        break;
-      case LOAD_FOLLOWINGS_SUCCESS:
+      })
+      .addCase(loadFollowings.fulfilled, (draft, action) => {
         draft.loadFollowingsLoading = false;
+        draft.me.Followings = action.payload;
         draft.loadFollowingsDone = true;
-        draft.me.Followings = action.data;
-        break;
-      case LOAD_FOLLOWINGS_FAILURE:
+      })
+      .addCase(loadFollowings.rejected, (draft, action) => {
         draft.loadFollowingsLoading = false;
-        draft.loadFollowingsError = action.error;
-        break;
-
-      case REMOVE_FOLLOWER_REQUEST:
+        draft.loadFollowingsError = action.error.message;
+      })
+      .addCase(loadFollowers.pending, (draft) => {
+        draft.loadFollowersLoading = true;
+        draft.loadFollowersDone = false;
+        draft.loadFollowersError = null;
+      })
+      .addCase(loadFollowers.fulfilled, (draft, action) => {
+        draft.loadFollowersLoading = false;
+        draft.me.Followers = action.payload;
+        draft.loadFollowersDone = true;
+      })
+      .addCase(loadFollowers.rejected, (draft, action) => {
+        draft.loadFollowersLoading = false;
+        draft.loadFollowersError = action.error.message;
+      })
+      .addCase(loadUser.pending, (draft) => {
+        draft.loadUserLoading = true;
+        draft.loadUserDone = false;
+        draft.loadUserError = null;
+      })
+      .addCase(loadUser.fulfilled, (draft, action) => {
+        draft.loadUserLoading = false;
+        draft.UserId = action.payload;
+        draft.loadUserDone = true;
+      })
+      .addCase(loadUser.rejected, (draft, action) => {
+        draft.loadUserLoading = false;
+        draft.loadUserError = action.error.message;
+      })
+      .addCase(removeFollower.pending, (draft) => {
         draft.removeFollowerLoading = true;
         draft.removeFollowerDone = false;
         draft.removeFollowerError = null;
-        break;
-      case REMOVE_FOLLOWER_SUCCESS:
+      })
+      .addCase(removeFollower.fulfilled, (draft, action) => {
         draft.removeFollowerLoading = false;
-        draft.removeFollowerDone = true;
         draft.me.Followers = draft.me.Followers.filter(
-          (v) => v.id !== action.data.UserId
+          (v) => v.id !== action.payload.UserId
         );
-        break;
-      case REMOVE_FOLLOWER_FAILURE:
+        draft.removeFollowerDone = true;
+      })
+      .addCase(removeFollower.rejected, (draft, action) => {
         draft.removeFollowerLoading = false;
-        draft.removeFollowerError = action.error;
-        break;
+        draft.removeFollowerError = action.error.message;
+      })
+      .addDefaultCase((state) => state),
+});
 
-      case ADD_POST_TO_ME:
-        draft.me.Posts.unshift({ id: action.data });
-        break;
-      // return {
-      //   ...state,
-      //   me: { ...state.me, Posts: [{ id: action.data }, ...state.me.Posts] },
-      // };
-      case REMOVE_POST_OF_ME:
-        draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
-        break;
-      // return {
-      //   ...state,
-      //   me: {
-      //     ...state.me,
-      //     Posts: state.me.Posts.filter((v) => v.id !== action.data),
-      //   },
-      // };
-
-      default:
-        break;
-    }
-  });
-};
 export default userSlice;
