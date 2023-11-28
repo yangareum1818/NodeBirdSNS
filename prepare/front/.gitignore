@@ -1,5 +1,7 @@
-/.next
-/node_modules
+.next
+
+# Dependency directories
+node_modules/
 
 .DS_Store
 .env
