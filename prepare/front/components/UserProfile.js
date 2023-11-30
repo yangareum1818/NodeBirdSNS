@@ -2,14 +2,14 @@ import React, { useCallback } from "react";
 import Link from "next/link";
 import { Avatar, Button, Card } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutRequestAction } from "../reducers/user";
+import { logOut, logoutRequestAction } from "../reducers/user";
 
 const UserProfile = () => {
   const dispatch = useDispatch({});
   const { me, logOutLoading } = useSelector((state) => state.user);
 
   const onLogOut = useCallback(() => {
-    dispatch(logoutRequestAction());
+    dispatch(logOut());
   }, []);
 
   return (
@@ -17,29 +17,23 @@ const UserProfile = () => {
       actions={[
         <div key="twit">
           <Link href={`/user/${me.id}`} legacyBehavior>
-            <a>
-              짹쨱
-              <br />
-              {me.Posts.length}
-            </a>
+            짹쨱
+            <br />
+            {me.Posts.length}
           </Link>
         </div>,
         <div key="followings">
           <Link href="/profile" legacyBehavior>
-            <a>
-              팔로잉
-              <br />
-              {me.Followings.length}
-            </a>
+            팔로잉
+            <br />
+            {me.Followings.length}
           </Link>
         </div>,
         <div key="followings">
           <Link href="/profile" legacyBehavior>
-            <a>
-              팔로워
-              <br />
-              {me.Followers.length}
-            </a>
+            팔로워
+            <br />
+            {me.Followers.length}
           </Link>
         </div>,
       ]}

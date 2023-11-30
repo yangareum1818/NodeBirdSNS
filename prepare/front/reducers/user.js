@@ -117,7 +117,7 @@ const userSlice = createSlice({
       draft.me.Posts.unshift({ id: action.payload });
     },
     removePostOfMe(draft, action) {
-      draft.me.Posts.filter((v) => v.id !== action.payload);
+      draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.payload);
     },
   },
   extraReducers: (builder) =>

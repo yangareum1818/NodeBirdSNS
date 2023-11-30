@@ -20,6 +20,10 @@ import {
   LIKE_POST_REQUEST,
   UNLIKE_POST_REQUEST,
   RETWEET_REQUEST,
+  likePost,
+  unlikePost,
+  removePost,
+  retweet,
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 
@@ -37,19 +41,15 @@ const PostCard = ({ post }) => {
   // 2. const { me } = useSelector((state) => state.user)
   // 2. const id = me?.id;
 
+  console.log("id", id, removePostLoading);
+
   const onLike = useCallback(() => {
     if (!id) return alert("로그인이 필요합니다.");
-    return dispatch({
-      type: LIKE_POST_REQUEST,
-      data: post.id,
-    });
+    return dispatch(likePost(post.id));
   }, [id]);
   const onUnLike = useCallback(() => {
     if (!id) return alert("로그인이 필요합니다.");
-    return dispatch({
-      type: UNLIKE_POST_REQUEST,
-      data: post.id,
-    });
+    return dispatch(unlikePost(post.id));
   }, [id]);
 
   const onToggleComment = useCallback(() => {
@@ -58,18 +58,12 @@ const PostCard = ({ post }) => {
 
   const onRemovePost = useCallback(() => {
     if (!id) return alert("로그인이 필요합니다.");
-    return dispatch({
-      type: REMOVE_POST_REQUEST,
-      data: post.id,
-    });
+    return dispatch(removePost(post.id));
   }, [id]);
 
   const onRetweet = useCallback(() => {
     if (!id) return alert("로그인이 필요합니다.");
-    return dispatch({
-      type: RETWEET_REQUEST,
-      data: post.id,
-    });
+    return dispatch(retweet(post.id));
   }, [id]);
 
   // 좋아요누른사람 데이터 가져오기 ( v.id : 현재 좋아요를 누른사람, DB에 저장되어있는 user.id)
@@ -137,9 +131,7 @@ const PostCard = ({ post }) => {
               style={{ cursor: "pointer" }}
               avatar={
                 <Link href={`/user/${post.Retweet.User.id}`} legacyBehavior>
-                  <a>
-                    <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
-                  </a>
+                  <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
                 </Link>
               }
               title={post.Retweet.User.nickname}
@@ -155,9 +147,7 @@ const PostCard = ({ post }) => {
               style={{ cursor: "pointer" }}
               avatar={
                 <Link href={`/user/${post.User.id}`} legacyBehavior>
-                  <a>
-                    <Avatar>{post.User.nickname[0]}</Avatar>
-                  </a>
+                  <Avatar>{post.User.nickname[0]}</Avatar>
                 </Link>
               }
               title={post.User.nickname}
@@ -181,9 +171,7 @@ const PostCard = ({ post }) => {
                   author={item.User.nickname}
                   avatar={
                     <Link href={`/user/${item.User.id}`} legacyBehavior>
-                      <a>
-                        <Avatar>{item.User.nickname[0]}</Avatar>
-                      </a>
+                      <Avatar>{item.User.nickname[0]}</Avatar>
                     </Link>
                   }
                   content={item.content}

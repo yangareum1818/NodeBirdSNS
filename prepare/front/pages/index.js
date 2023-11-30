@@ -64,16 +64,17 @@ const Home = (props) => {
 
 // 프론트 서버에서 백엔드로 쿠키 전달
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    console.log("getServerSideProps start");
-    console.log("context", context);
-    const cookie = context.req ? context.req.headers.cookie : "";
-    if (context.req && cookie) {
-      axios.defaults.headers.Cookie = cookie;
+  (store) =>
+    async ({ req }) => {
+      console.log("getServerSideProps start");
+      console.log("context", req);
+      const cookie = req ? req.headers.cookie : "";
+      if (req && cookie) {
+        axios.defaults.headers.Cookie = cookie;
+      }
+      await store.dispatch(loadPosts());
+      await store.dispatch(loadMyInfo());
+      console.log("state", store.getState());
     }
-    await store.dispatch(loadPosts());
-    await store.dispatch(loadMyInfo());
-    console.log("state", store.getState());
-  }
 );
 export default Home;

@@ -124,7 +124,7 @@ const postSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
-    removeImages(state, action) {
+    removeImage(state, action) {
       state.imagePaths = state.imagePaths.filter(
         (v, i) => i !== action.payload
       );
@@ -319,7 +319,8 @@ const postSlice = createSlice({
       .addCase(uploadImages.rejected, (draft, action) => {
         draft.uploadImagesLoading = false;
         draft.uploadImagesError = action.error.message;
-      }),
+      })
+      .addDefaultCase((state) => state),
 });
 
 export default postSlice;

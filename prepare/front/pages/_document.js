@@ -35,7 +35,7 @@ export default class MyDocument extends Document {
         <Head />
         <body>
           <Main />
-          <script src="https://polyfill.io/v3/polyfill.min.js?features=es2022%2Ces2021%2Ces2020%2Ces2019%2Ces2018%2Ces2017%2Ces2016%2Ces2015%2Cdefault" />
+          {/* <script src="https://polyfill.io/v3/polyfill.min.js?features=es2022%2Ces2021%2Ces2020%2Ces2019%2Ces2018%2Ces2017%2Ces2016%2Ces2015%2Cdefault" /> */}
           <NextScript />
         </body>
       </Html>

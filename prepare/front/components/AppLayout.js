@@ -1,14 +1,16 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
-import { Col, Input, Menu, Row } from "antd";
+import { Col, Input, Layout, Menu, Row } from "antd";
 import { useSelector } from "react-redux";
 import styled, { createGlobalStyle } from "styled-components";
 
 import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
 import useInput from "../hooks/useInput";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
+
+const { Header, Content } = Layout;
 
 const Global = createGlobalStyle`
   .ant-row {
@@ -35,7 +37,7 @@ const LinkTitle = styled.span`
 const AppLayout = ({ children }) => {
   const [searchInput, onChangeSearchInput] = useInput("");
   const { me } = useSelector((state) => state.user);
-
+  const router = useRouter();
   const onSearch = useCallback(() => {
     Router.push(`/hashtag/${searchInput}`);
   }, [searchInput]);
@@ -67,39 +69,65 @@ const AppLayout = ({ children }) => {
   ];
 
   return (
-    <div>
+    <Layout>
       <Global />
       {/* 로그인 되었을 때 회원가입 메뉴 보이지 않기. */}
-      <Menu mode="horizontal" items={menuitems} />
-      <Row gutter={8}>
-        <Col xs={24} md={6}>
-          {me ? <UserProfile /> : <LoginForm />}
-        </Col>
-        <Col xs={24} md={12}>
-          {children}
-        </Col>
-        <Col xs={24} md={6}>
-          <LinkTitle>Github</LinkTitle>
-          <a
-            href="https://github.com/yangareum1818"
-            target={"_blank"}
-            rel="noreferrer noopener"
-            style={{ display: "block" }}
+      <Header
+        style={{
+          position: "fixed",
+          zIndex: 1,
+          width: "100%",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Menu
+          mode="horizontal"
+          defaultSelectedKeys={[router.pathname]}
+          items={menuitems}
+        />
+      </Header>
+      <Content
+        style={{ padding: "0 50px", marginTop: 64, backgroundColor: "#fff" }}
+      >
+        <Row gutter={8}>
+          <Col xs={24} md={6}>
+            {me ? <UserProfile /> : <LoginForm />}
+          </Col>
+          <Col xs={24} md={14}>
+            {children}
+          </Col>
+          <Col
+            xs={24}
+            md={4}
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              flexDirection: "column",
+              marginTop: 10,
+            }}
           >
-            yangareum1818
-          </a>
-          <LinkTitle>Velog</LinkTitle>
-          <a
-            href="https://velog.io/@yangareum1818"
-            target={"_blank"}
-            rel="noreferrer noopener"
-            style={{ display: "block" }}
-          >
-            @YangSeeInGan
-          </a>
-        </Col>
-      </Row>
-    </div>
+            <LinkTitle>Github</LinkTitle>
+            <Link
+              href="https://github.com/yangareum1818"
+              target={"_blank"}
+              rel="noreferrer noopener"
+              style={{ display: "block" }}
+            >
+              yangareum1818
+            </Link>
+            <LinkTitle style={{ marginTop: 10 }}>Velog</LinkTitle>
+            <Link
+              href="https://velog.io/@yangareum1818"
+              target={"_blank"}
+              rel="noreferrer noopener"
+              style={{ display: "block" }}
+            >
+              @YangSeeInGan
+            </Link>
+          </Col>
+        </Row>
+      </Content>
+    </Layout>
   );
 };
 

@@ -5,8 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   LOAD_HASHTAG_POSTS_REQUEST,
   LOAD_USER_POSTS_REQUEST,
+  loadHashtagPosts,
+  loadUserPosts,
 } from "../../reducers/post";
-import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
+import { LOAD_MY_INFO_REQUEST, loadMyInfo } from "../../reducers/user";
 import { END } from "redux-saga";
 
 import wrapper from "../../store/configureStore";
@@ -31,11 +33,7 @@ const Hashtag = () => {
       ) {
         // 마지막 게시글의 id (게시글이 0개일 경우. 즉, undefined인 경우를 대비해 옵셔널체이닝)
         const lastId = mainPosts[mainPosts.length - 1]?.id;
-        dispatch({
-          type: LOAD_USER_POSTS_REQUEST,
-          lastId,
-          data: tag,
-        });
+        dispatch(loadUserPosts({ lastId, tag }));
       }
     };
 
@@ -59,19 +57,17 @@ const Hashtag = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ req, params }) => {
+      console.log("req[tag]", req);
       const cookie = req ? req.headers.cookie : "";
       if (req && cookie) {
         axios.defaults.headers.Cookie = cookie;
       }
-      store.dispatch({
-        type: LOAD_HASHTAG_POSTS_REQUEST,
-        data: params.tag,
-      });
-      store.dispatch({
-        type: LOAD_MY_INFO_REQUEST,
-      });
-      store.dispatch(END);
-      await store.sagaTask.toPromise();
+      await store.dispatch(loadHashtagPosts({ hashtag: params.tag }));
+      await store.dispatch(loadMyInfo());
+
+      return {
+        props: {},
+      };
     }
 );
 export default Hashtag;

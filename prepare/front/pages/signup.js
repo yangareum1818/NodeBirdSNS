@@ -9,7 +9,12 @@ import axios from "axios";
 
 import AppLayout from "../components/AppLayout";
 import useInput from "../hooks/useInput";
-import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from "../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  SIGN_UP_REQUEST,
+  loadMyInfo,
+  signup,
+} from "../reducers/user";
 import wrapper from "../store/configureStore";
 
 const ErrorMessage = styled.p`
@@ -43,6 +48,8 @@ const Signup = () => {
     (state) => state.user
   );
 
+  console.log("me", me);
+
   // 회원가입페이지에서 로그인을 했을 경우
   useEffect(() => {
     if (me && me.id) Router.replace("/");
@@ -61,10 +68,7 @@ const Signup = () => {
     if (password !== passwordCheck) return setPasswordError(true);
     if (!term) return setTermError(true);
 
-    dispatch({
-      type: SIGN_UP_REQUEST,
-      data: { email, password, nickname },
-    });
+    dispatch(signup({ email, nickname, password }));
 
     console.log(email, nickname, password);
   }, [email, password, passwordCheck, term]);
@@ -139,19 +143,19 @@ const Signup = () => {
 
 // 프론트 서버에서 백엔드로 쿠키 전달
 export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    console.log("getServerSideProps start");
-    console.log("context", context);
-    const cookie = context.req ? context.req.headers.cookie : "";
-    if (context.req && cookie) {
-      axios.defaults.headers.Cookie = cookie;
+  (store) =>
+    async ({ req }) => {
+      console.log("getServerSideProps start");
+      console.log("context", req);
+      const cookie = req ? req.headers.cookie : "";
+      if (req && cookie) {
+        axios.defaults.headers.Cookie = cookie;
+      }
+      await store.dispatch(loadMyInfo());
+      return {
+        props: {},
+      };
     }
-    store.dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
-    store.dispatch(END);
-    await store.sagaTask.toPromise();
-  }
 );
 
 export default Signup;
