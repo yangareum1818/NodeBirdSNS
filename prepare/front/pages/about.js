@@ -6,7 +6,7 @@ import { END } from "redux-saga";
 import { Card, Avatar } from "antd";
 import AppLayout from "../components/AppLayout";
 import wrapper from "../store/configureStore";
-import { LOAD_USER_REQUEST } from "../reducers/user";
+import { LOAD_USER_REQUEST, loadUser } from "../reducers/user";
 
 const About = () => {
   const { userInfo } = useSelector((state) => state.user);
@@ -52,12 +52,7 @@ const About = () => {
 export const getStaticProps = wrapper.getStaticProps(
   (store) => async (context) => {
     console.log("getstaticProps Start");
-    store.dispatch({
-      type: LOAD_USER_REQUEST,
-      data: 1,
-    });
-    store.dispatch(END);
-    await store.sagaTask.toPromise();
+    await store.dispatch(loadUser(1));
   }
 );
 

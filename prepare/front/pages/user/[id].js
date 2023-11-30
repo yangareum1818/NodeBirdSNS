@@ -9,18 +9,26 @@ import wrapper from "../../store/configureStore";
 import Head from "next/head";
 import AppLayout from "../../components/AppLayout";
 import PostCard from "../../components/PostCard";
-import { LOAD_USER_POSTS_REQUEST } from "../../reducers/post";
-import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from "../../reducers/user";
+import { LOAD_USER_POSTS_REQUEST, loadUserPosts } from "../../reducers/post";
+import {
+  LOAD_MY_INFO_REQUEST,
+  LOAD_USER_REQUEST,
+  loadMyInfo,
+  loadUser,
+} from "../../reducers/user";
 
 // 특정 사용자의 게시글 불러오기
-const User = () => {
+const User = (props) => {
   const dispatch = useDispatch();
   const router = useRouter();
+
   const { id } = router.query;
-  const { userInfo, me } = useSelector((state) => state.user);
+
+  const { me, userInfo } = useSelector((state) => state.user);
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(
     (state) => state.post
   );
+  console.log(userInfo, me);
 
   // 스크롤을 어느정도 내렸을 때, 데이터 불러오기
   useEffect(() => {
@@ -33,11 +41,7 @@ const User = () => {
       ) {
         // 마지막 게시글의 id (게시글이 0개일 경우. 즉, undefined인 경우를 대비해 옵셔널체이닝)
         const lastId = mainPosts[mainPosts.length - 1]?.id;
-        dispatch({
-          type: LOAD_USER_POSTS_REQUEST,
-          lastId,
-          data: id,
-        });
+        dispatch(loadUserPosts({ lastId, id }));
       }
     };
 
@@ -47,8 +51,6 @@ const User = () => {
       window.removeEventListener("scroll", onScroll);
     };
   }, [hasMorePosts, id, mainPosts.length, loadPostsLoading]);
-
-  console.log(userInfo, me);
 
   return (
     <AppLayout>
@@ -118,23 +120,18 @@ const User = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ req, params }) => {
+      console.log("user[id] req", req);
       const cookie = req ? req.headers.cookie : "";
       if (req && cookie) {
         axios.defaults.headers.Cookie = cookie;
       }
-      store.dispatch({
-        type: LOAD_USER_POSTS_REQUEST,
-        data: params.id,
-      });
-      store.dispatch({
-        type: LOAD_MY_INFO_REQUEST,
-      });
-      store.dispatch({
-        type: LOAD_USER_REQUEST,
-        data: params.id,
-      });
-      store.dispatch(END);
-      await store.sagaTask.toPromise();
+      await store.dispatch(loadUserPosts({ id: params.id }));
+      await store.dispatch(loadMyInfo());
+      await store.dispatch(loadUser(params.id));
+
+      return {
+        props: {},
+      };
     }
 );
 export default User;

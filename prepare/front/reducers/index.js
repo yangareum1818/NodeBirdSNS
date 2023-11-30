@@ -1,15 +1,13 @@
-import { HYDRATE } from "next-redux-wrapper";
-import user from "./user";
-import post from "./post";
 import { combineReducers } from "redux";
 import axios from "axios";
+
 import userSlice from "./user";
 import postSlice from "./post";
 
 axios.defaults.baseURL = "http://localhost:3065";
 axios.defaults.withCredentials = true;
 
-const rootReducer = combineReducers({
+const reducer = combineReducers({
   user: userSlice.reducer,
   post: postSlice.reducer,
 });
@@ -54,4 +52,4 @@ const rootReducer = combineReducers({
 //     }
 //   }
 // };
-export default rootReducer;
+export default reducer;

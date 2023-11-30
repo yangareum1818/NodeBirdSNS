@@ -9,9 +9,10 @@ import {
   ImgWrapper,
   Indicator,
 } from "./style";
+import Image from "next/image";
 
 const ImagesZoom = ({ images, onClose }) => {
-  const [currentSlide, setCurrentSlide] = useState("");
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   return (
     <Overlay>
@@ -31,7 +32,10 @@ const ImagesZoom = ({ images, onClose }) => {
           >
             {images.map((v) => (
               <ImgWrapper key={v.src}>
-                <img src={`http://localhost:3065/${v.src}`} alt={v.src} />
+                <Image
+                  src={`${v.src.replace(/\/thumb\//, "/original/")}`}
+                  alt={v.src}
+                />
               </ImgWrapper>
             ))}
           </Slick>

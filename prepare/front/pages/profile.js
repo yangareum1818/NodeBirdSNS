@@ -9,7 +9,7 @@ import useSWR from "swr";
 import AppLayout from "../components/AppLayout";
 import FollowList from "../components/FollowList";
 import NicknameEditForm from "../components/NicknameEditForm";
-import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
+import { LOAD_MY_INFO_REQUEST, loadMyInfo } from "../reducers/user";
 import wrapper from "../store/configureStore";
 
 const fetcher = (url) =>
@@ -89,11 +89,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     if (context.req && cookie) {
       axios.defaults.headers.Cookie = cookie;
     }
-    store.dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
-    store.dispatch(END);
-    await store.sagaTask.toPromise();
+    await store.dispatch(loadMyInfo());
   }
 );
 
