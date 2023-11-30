@@ -2,7 +2,7 @@ import { Form, Input } from "antd";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../hooks/useInput";
-import { CHANGE_NICKNAME_REQUEST } from "../reducers/user";
+import { CHANGE_NICKNAME_REQUEST, changeNickname } from "../reducers/user";
 
 const NicknameEditForm = () => {
   const style = useMemo(
@@ -24,10 +24,7 @@ const NicknameEditForm = () => {
 
   const dispatch = useDispatch();
   const onSubmit = useCallback(() => {
-    dispatch({
-      type: CHANGE_NICKNAME_REQUEST,
-      data: nickname,
-    });
+    dispatch(changeNickname(nickname));
   }, [nickname]);
 
   return (

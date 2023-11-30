@@ -20,7 +20,7 @@ const NodeBird = ({ Component, ...rest }) => {
         <link rel="icon" href="https://nodebird.com/favicon.ico" />
         <title>NodeBird</title>
       </Head>
-      <Component />
+      <Component {...pageProps} />
       {/* pageProps={...pageProps} */}
     </Provider>
   );
@@ -32,7 +32,7 @@ NodeBird.propTypes = {
 };
 
 export function reportWebVitals(metric) {
-  console.log(metric);
+  console.log("_app metric", metric);
 }
 
 export default NodeBird;

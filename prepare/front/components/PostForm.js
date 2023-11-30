@@ -2,17 +2,20 @@ import { Button, Form, Input } from "antd";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../hooks/useInput";
-import {
+import postSlice, {
   addPost,
   ADD_POST_REQUEST,
   REMOVE_IMAGE,
   UPLOAD_IMAGES_REQUEST,
+  uploadImages,
 } from "../reducers/post";
 
 const PostForm = () => {
   const { imagePaths, addPostDone } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const [text, onChangeText, setText] = useInput("");
+
+  console.log(imagePaths);
 
   useEffect(() => {
     if (addPostDone) {
@@ -32,10 +35,7 @@ const PostForm = () => {
     });
     formData.append("content", text);
 
-    return dispatch({
-      type: ADD_POST_REQUEST,
-      data: formData,
-    });
+    return dispatch(addPost(formData));
   }, [text, imagePaths]);
 
   const imageInput = useRef("");
@@ -49,17 +49,11 @@ const PostForm = () => {
     [].forEach.call(e.target.files, (f) => {
       imageFormData.append("image", f);
     });
-    dispatch({
-      type: UPLOAD_IMAGES_REQUEST,
-      data: imageFormData,
-    });
+    dispatch(uploadImages(imageFormData));
   });
 
   const onRemoveImage = useCallback((i) => () => {
-    dispatch({
-      type: REMOVE_IMAGE,
-      data: i,
-    });
+    dispatch(postSlice.actions.removeImage(i));
   });
 
   return (
