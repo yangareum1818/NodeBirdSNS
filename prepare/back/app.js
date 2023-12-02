@@ -8,6 +8,8 @@ const db = require("./models");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const path = require("path");
+const hpp = require("hpp");
+const helment = require("helmet");
 
 const passportConfig = require("./passport");
 const passport = require("passport");
@@ -27,13 +29,20 @@ db.sequelize
 
 passportConfig();
 
-app.use(morgan("dev"));
-app.use(
-  cors({
-    origin: "http://localhost:3060",
-    credentials: true, // 쿠키 전송 true
-  })
-);
+if (process.env.NODE_ENV === "production") {
+  app.use(morgan("combined"));
+  app.use(hpp());
+  app.use(
+    helment({
+      contentSecrityPolicy: false,
+    })
+  );
+  app.use(cors({ origin: "http://nodebird.com", credentials: true }));
+} else {
+  app.use(morgan("dev"));
+  app.use(cors({ origin: true, credentials: true }));
+}
+
 app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -43,6 +52,11 @@ app.use(
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      domain: process.env.NODE_ENV === "production" && ".nodebird.com",
+    },
   })
 );
 app.use(passport.initialize());
